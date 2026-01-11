@@ -3,152 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visa Guide AI - Your Trusted Immigration Assistant</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Visa Guide AIA - Your Trusted Visa Application Portal</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="nav-logo">
-                <i class="fas fa-passport"></i>
-                <span>Visa Guide AI</span>
-            </a>
-            <div class="nav-links">
-                <a href="index.html" class="active">Home</a>
-                <a href="dashboard.html">Dashboard</a>
-                <a href="forms.html">Forms</a>
-                <a href="documents.html">Documents</a>
-                <a href="chatbot.html">Assistant</a>
-                <a href="civics.html">Civics</a>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <path d="M9 12l2 2 4-4"/>
+                    </svg>
+                </div>
+                <h1>Visa Guide AIA</h1>
+                <p class="subtitle">Your Trusted Visa Application Portal</p>
             </div>
-            <div class="nav-auth" id="navAuth">
-                <a href="auth.html" class="btn btn-outline">Sign In</a>
-                <a href="auth.html?tab=register" class="btn btn-primary">Get Started</a>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="login-tab" onclick="switchTab('login')">Login</button>
+                <button class="auth-tab" id="register-tab" onclick="switchTab('register')">Register</button>
             </div>
-            <button class="mobile-menu-btn">
-                <i class="fas fa-bars"></i>
-            </button>
+            
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form active">
+                <div class="form-group">
+                    <label for="login-email">Email Address</label>
+                    <input type="email" id="login-email" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full">Login</button>
+                
+                <div class="switch-form">
+                    <p>Don't have an account? <a href="#" onclick="switchTab('register'); return false;">Register here</a></p>
+                </div>
+            </form>
+            
+            <!-- Register Form -->
+            <form id="register-form" class="auth-form">
+                <div class="form-group">
+                    <label for="register-name">Full Name</label>
+                    <input type="text" id="register-name" placeholder="Enter your full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-email">Email Address</label>
+                    <input type="email" id="register-email" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" placeholder="Create a password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-confirm-password">Confirm Password</label>
+                    <input type="password" id="register-confirm-password" placeholder="Confirm your password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+                
+                <div class="switch-form">
+                    <p>Already have an account? <a href="#" onclick="switchTab('login'); return false;">Login here</a></p>
+                </div>
+            </form>
         </div>
-    </nav>
-
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Your Complete U.S. Immigration Assistant</h1>
-            <p>Navigate the complex immigration process with confidence. Our AI-powered guide helps you prepare forms, organize documents, and study for your civics test.</p>
-            <div class="hero-buttons">
-                <a href="auth.html?tab=register" class="btn btn-primary btn-lg">
-                    <i class="fas fa-rocket"></i>
-                    Start Free Today
-                </a>
-                <a href="dashboard.html" class="btn btn-secondary btn-lg">
-                    <i class="fas fa-eye"></i>
-                    Explore Features
-                </a>
-            </div>
-            <div class="hero-stats">
-                <div class="stat">
-                    <span class="stat-number">10K+</span>
-                    <span class="stat-label">Users Helped</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-number">50+</span>
-                    <span class="stat-label">Form Types</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-number">100%</span>
-                    <span class="stat-label">Free to Start</span>
-                </div>
-            </div>
+        
+        <div class="auth-features">
+            <h3>Why Choose Visa Guide AIA?</h3>
+            <ul class="feature-list">
+                <li>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span>Track your visa applications in real-time</span>
+                </li>
+                <li>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span>Secure document management system</span>
+                </li>
+                <li>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span>Expert guidance for all visa types</span>
+                </li>
+                <li>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span>24/7 customer support</span>
+                </li>
+            </ul>
         </div>
-        <div class="hero-visual">
-            <div class="hero-card">
-                <div class="card-header">
-                    <i class="fas fa-file-alt"></i>
-                    <span>N-400 Application</span>
-                </div>
-                <div class="card-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 75%"></div>
-                    </div>
-                    <span>75% Complete</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="features">
-        <div class="section-header">
-            <h2>Everything You Need for Your Immigration Journey</h2>
-            <p>Powerful tools to simplify every step of the process</p>
-        </div>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-clipboard-list"></i>
-                </div>
-                <h3>Smart Form Preparation</h3>
-                <p>Interactive forms with real-time validation, auto-save, and helpful explanations.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-folder-open"></i>
-                </div>
-                <h3>Document Organization</h3>
-                <p>Upload, categorize, and manage all your important documents in one place.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-robot"></i>
-                </div>
-                <h3>AI Immigration Assistant</h3>
-                <p>Get instant answers to your immigration questions, 24/7.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-globe-americas"></i>
-                </div>
-                <h3>Civics Test Prep</h3>
-                <p>Master the civics test with interactive flashcards and practice questions.</p>
-            </div>
-        </div>
-    </section>
-
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-brand">
-                <a href="index.html" class="nav-logo">
-                    <i class="fas fa-passport"></i>
-                    <span>Visa Guide AI</span>
-                </a>
-                <p>Your trusted companion for U.S. immigration.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 Visa Guide AI. All rights reserved.</p>
-        </div>
-    </footer>
-
+    </div>
+    
+    <!-- Notification Container -->
+    <div id="notification-container"></div>
+    
     <script src="js/storage.js"></script>
     <script src="js/auth.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const user = Storage.getCurrentUser();
-            const navAuth = document.getElementById('navAuth');
-            if (user) {
-                navAuth.innerHTML = `
-                    <span class="user-greeting">Hello, ${user.fullName || user.email.split('@')[0]}</span>
-                    <a href="dashboard.html" class="btn btn-outline">Dashboard</a>
-                    <button onclick="handleLogout()" class="btn btn-primary">Logout</button>
-                `;
+        // Tab switching functionality
+        function switchTab(tab) {
+            const loginTab = document.getElementById('login-tab');
+            const registerTab = document.getElementById('register-tab');
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            
+            if (tab === 'login') {
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
+                loginForm.classList.add('active');
+                registerForm.classList.remove('active');
+            } else {
+                loginTab.classList.remove('active');
+                registerTab.classList.add('active');
+                loginForm.classList.remove('active');
+                registerForm.classList.add('active');
+            }
+        }
+        
+        // Check if user is already logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = Storage.getCurrentUser();
+            if (currentUser) {
+                window.location.href = 'dashboard.html';
             }
         });
-        function handleLogout() {
-            Auth.logout();
-        }
     </script>
 </body>
 </html>
