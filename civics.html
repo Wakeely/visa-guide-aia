@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visa Guide AI - Civics Test Prep</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .civics-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .civics-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .civics-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .civics-header p {
+            opacity: 0.9;
+        }
+        
+        .mode-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+        
+        .civics-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .question-display {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 2rem;
+            text-align: center;
+            line-height: 1.4;
+        }
+        
+        .question-number {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--white);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            line-height: 40px;
+            margin-right: 1rem;
+        }
+        
+        .answer-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .answer-option {
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .answer-option:hover {
+            border-color: var(--primary);
+            background: rgba(30, 64, 175, 0.05);
+        }
+        
+        .answer-option.selected {
+            border-color: var(--primary);
+            background: rgba(30, 64, 175, 0.1);
+        }
+        
+        .answer-option.correct {
+            border-color: var(--success);
+            background: var(--success-light);
+        }
+        
+        .answer-option.incorrect {
+            border-color: var(--danger);
+            background: var(--danger-light);
+        }
+        
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .flashcard {
+            perspective: 1000px;
+            height: 300px;
+            cursor: pointer;
+            margin-bottom: 2rem;
+        }
+        
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .flashcard-front,
+        .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+        }
+        
+        .flashcard-front {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+        }
+        
+        .flashcard-back {
+            background: var(--white);
+            border: 2px solid var(--primary);
+            transform: rotateY(180deg);
+        }
+        
+        .flashcard-content {
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+        
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: var(--radius);
+        }
+        
+        .stat-item .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-item .label {
+            font-size: 0.85rem;
+            color: var(--gray-500);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .result-display {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .result-score {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .result-message {
+            font-size: 1.25rem;
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-passport"></i>
+                <span>Visa Guide AI</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="forms.html">Forms</a>
+                <a href="documents.html">Documents</a>
+                <a href="chatbot.html">Assistant</a>
+                <a href="civics.html" class="active">Civics</a>
+            </div>
+            <div class="nav-auth" id="navAuth"></div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Civics Header -->
+    <div class="civics-header">
+        <h1><i class="fas fa-globe-americas"></i> Civics Test Preparation</h1>
+        <p>Prepare for your U.S. citizenship civics test with practice questions and flashcards</p>
+    </div>
+
+    <!-- Civics Content -->
+    <div class="civics-container" style="padding: 0 2rem 2rem;">
+        <!-- Progress Stats -->
+        <div class="progress-stats">
+            <div class="stat-item">
+                <div class="value" id="questionsAnswered">0</div>
+                <div class="label">Questions Answered</div>
+            </div>
+            <div class="stat-item">
+                <div class="value" id="correctAnswers">0</div>
+                <div class="label">Correct Answers</div>
+            </div>
+            <div class="stat-item">
+                <div class="value" id="accuracy">0%</div>
+                <div class="label">Accuracy</div>
+            </div>
+            <div class="stat-item">
+                <div class="value" id="cardsStudied">0</div>
+                <div class="label">Cards Studied</div>
+            </div>
+        </div>
+
+        <!-- Mode Selector -->
+        <div class="mode-selector">
+            <button class="btn btn-primary" id="btnPractice" onclick="setMode('practice')">
+                <i class="fas fa-clipboard-list"></i> Practice Questions
+            </button>
+            <button class="btn btn-outline" id="btnFlashcards" onclick="setMode('flashcards')">
+                <i class="fas fa-clone"></i> Flashcards
+            </button>
+        </div>
+
+        <!-- Practice Mode -->
+        <div id="practiceMode">
+            <div class="civics-card">
+                <div id="questionDisplay">
+                    <div class="question-display">
+                        <span class="question-number" id="questionNum">1</span>
+                        <span id="questionText">Click "Start Practice" to begin!</span>
+                    </div>
+                </div>
+                
+                <div class="answer-options" id="answerOptions">
+                    <!-- Options will be inserted here -->
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-outline" id="btnCheck" onclick="checkAnswer()" style="display: none;">
+                        <i class="fas fa-check"></i> Check Answer
+                    </button>
+                    <button class="btn btn-primary" id="btnNext" onclick="nextQuestion()" style="display: none;">
+                        <i class="fas fa-arrow-right"></i> Next Question
+                    </button>
+                    <button class="btn btn-primary" id="btnStart" onclick="startPractice()">
+                        <i class="fas fa-play"></i> Start Practice
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcard Mode -->
+        <div id="flashcardMode" style="display: none;">
+            <div class="civics-card">
+                <div class="flashcard" id="flashcard" onclick="flipCard()">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="flashcard-content" id="flashcardFront">Click to start studying!</div>
+                        </div>
+                        <div class="flashcard-back">
+                            <div class="flashcard-content" id="flashcardBack">Press "Next Card"</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button class="btn btn-outline" onclick="previousCard()">
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                    <button class="btn btn-primary" onclick="markCardKnown()">
+                        <i class="fas fa-check"></i> I Know This
+                    </button>
+                    <button class="btn btn-primary" onclick="nextCard()">
+                        <i class="fas fa-arrow-right"></i> Next Card
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="civics-card" id="resultsCard" style="display: none;">
+            <div class="result-display">
+                <div class="result-score" id="finalScore">0%</div>
+                <div class="result-message" id="resultMessage">Great job!</div>
+                <button class="btn btn-primary" onclick="resetPractice()">
+                    <i class="fas fa-redo"></i> Practice Again
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Civics questions (100 official questions)
+        const civicsQuestions = [
+            { q: 'What is the supreme law of the land?', a: ['The Constitution', 'The President', 'Congress', 'The Bible'], correct: 0 },
+            { q: 'What does the Constitution do?', a: ['Sets up the government', 'Defines the government', 'Protects basic rights of Americans', 'All of these'], correct: 3 },
+            { q: 'The idea of self-government is in the first three words of the Constitution. What are those words?', a: ['We the People', 'Life, Liberty, Pursuit', 'Four score and seven', 'In God we trust'], correct: 0 },
+            { q: 'What is an amendment?', a: ['A change to the Constitution', 'A new law', 'A presidential order', 'A court ruling'], correct: 0 },
+            { q: 'What do we call the first ten amendments to the Constitution?', a: ['The Bill of Rights', 'The Articles of Confederation', 'The Declaration of Rights', 'The Amendments'], correct: 0 },
+            { q: 'What is one right or freedom from the First Amendment?', a: ['Speech', 'Bearing arms', 'Voting', 'Due process'], correct: 0 },
+            { q: 'What is the economic system in the United States?', a: ['Capitalist economy', 'Socialist economy', 'Communist economy', 'Mixed economy'], correct: 0 },
+            { q: 'What is the rule of law?', a: ['Everyone must follow the law', 'The president makes the law', 'Only citizens must follow', 'Some people are above the law'], correct: 0 },
+            { q: 'Name one branch or part of the government.', a: ['Congress', 'The President', 'The Courts', 'Any of these'], correct: 3 },
+            { q: 'What stops one branch of government from becoming too powerful?', a: ['Checks and balances', 'The military', 'The Constitution', 'Voting'], correct: 0 },
+            { q: 'Who is in charge of the executive branch?', a: ['The President', 'The Vice President', 'Congress', 'The Supreme Court'], correct: 0 },
+            { q: 'What is the name of the President of the United States?', a: ['Joe Biden', 'Donald Trump', 'Barack Obama', 'George Washington'], correct: 0 },
+            { q: 'What is the name of the Vice President of the United States?', a: ['Kamala Harris', 'Mike Pence', 'Nancy Pelosi', 'Antony Blinken'], correct: 0 },
+            { q: 'Who is the Governor of your state?', a: ['[State-specific]', 'The President', 'The Mayor', 'The Senator'], correct: 0 },
+            { q: 'What is the capital of your state?', a: ['[State-specific]', 'Washington D.C.', 'New York', 'Los Angeles'], correct: 0 },
+            { q: 'What are the two major political parties in the United States?', a: ['Democratic and Republican', 'Libertarian and Green', 'Independent and Green', 'Democratic and Libertarian'], correct: 0 },
+            { q: 'What is the political party of the President now?', a: ['Democratic', 'Republican', 'Green', 'Libertarian'], correct: 0 },
+            { q: 'What is the name of the Speaker of the House of Representatives now?', a: ['Mike Johnson', 'Nancy Pelosi', 'Kevin McCarthy', 'Chuck Schumer'], correct: 0 },
+            { q: 'We elect a President for how many years?', a: ['Four', 'Two', 'Six', 'Eight'], correct: 0 },
+            { q: 'We elect a Senator for how many years?', a: ['Six', 'Two', 'Four', 'Eight'], correct: 0 },
+            { q: 'Who is one of your state\'s U.S. Senators now?', a: ['[State-specific]', 'The President', 'The Governor', 'The Mayor'], correct: 0 },
+            { q: 'How many U.S. Senators are there?', a: ['100', '50', '435', '538'], correct: 0 },
+            { q: 'We elect a U.S. Representative for how many years?', a: ['Two', 'Four', 'Six', 'Eight'], correct: 0 },
+            { q: 'How many U.S. Representatives are there?', a: ['435', '100', '50', '538'], correct: 0 },
+            { q: 'Who does a U.S. Senator represent?', a: ['All people of the state', 'Only the wealthy', 'Only citizens of the capital', 'Only the governor'], correct: 0 },
+            { q: 'We elect a President for how many years?', a: ['Four', 'Two', 'Six', 'Eight'], correct: 0 },
+            { q: 'In what month do we vote for President?', a: ['November', 'January', 'May', 'December'], correct: 0 },
+            { q: 'What is the name of the President of the United States?', a: ['Joe Biden', 'Donald Trump', 'Barack Obama', 'George Washington'], correct: 0 },
+            { q: 'What is the name of the Vice President of the United States?', a: ['Kamala Harris', 'Mike Pence', 'Nancy Pelosi', 'Antony Blinken'], correct: 0 },
+            { q: 'If the President can no longer serve, who becomes President?', a: ['The Vice President', 'The Speaker of the House', 'The Secretary of State', 'The Chief Justice'], correct: 0 },
+            { q: 'If both the President and Vice President can no longer serve, who becomes President?', a: ['The Speaker of the House', 'The Secretary of State', 'The Chief Justice', 'The Governor'], correct: 0 },
+            { q: 'Who is the Commander in Chief of the military?', a: ['The President', 'The Vice President', 'Congress', 'The Secretary of Defense'], correct: 0 },
+            { q: 'Who signs bills to become laws?', a: ['The President', 'The Vice President', 'The Speaker of the House', 'The Chief Justice'], correct: 0 },
+            { q: 'Who vetoes bills?', a: ['The President', 'The Vice President', 'Congress', 'The Courts'], correct: 0 },
+            { q: 'What does the President\'s Cabinet do?', a: ['Advises the President', 'Makes laws', 'Rules on cases', 'Commands the military'], correct: 0 },
+            { q: 'What are two Cabinet-level positions?', a: ['Secretary of State', 'Attorney General', 'All of these'], correct: 2 },
+            { q: 'What does the judicial branch do?', a: ['Reviews laws', 'Makes laws', 'Carries out laws', 'Commands the military'], correct: 0 },
+            { q: 'What is the highest court in the United States?', a: ['The Supreme Court', 'The District Court', 'The Court of Appeals', 'The Federal Court'], correct: 0 },
+            { q: 'How many justices are on the Supreme Court?', a: ['Nine', 'Ten', 'Eight', 'Seven'], correct: 0 },
+            { q: 'Who is the Chief Justice of the United States now?', a: ['John Roberts', 'Clarence Thomas', 'Sonia Sotomayor', 'Neil Gorsuch'], correct: 0 },
+            { q: 'What is one power of the federal government?', a: ['To declare war', 'To issue driver\'s licenses', 'To regulate schools', 'To set voting ages'], correct: 0 },
+            { q: 'What is one power of the states?', a: ['To issue driver\'s licenses', 'To make treaties', 'To declare war', 'To print money'], correct: 0 },
+            { q: 'Who is the Governor of your state?', a: ['[State-specific]', 'The President', 'The Vice President', 'The Mayor'], correct: 0 },
+            { q: 'What is the capital of the United States?', a: ['Washington, D.C.', 'New York', 'Philadelphia', 'Boston'], correct: 0 },
+            { q: 'What are two major political parties in the United States?', a: ['Democratic and Republican', 'Libertarian and Green', 'Independent and Green', 'Democratic and Libertarian'], correct: 0 },
+            { q: 'What is the political party of the President now?', a: ['Democratic', 'Republican', 'Green', 'Libertarian'], correct: 0 },
+            { q: 'What is the name of the Speaker of the House of Representatives now?', a: ['Mike Johnson', 'Nancy Pelosi', 'Kevin McCarthy', 'Chuck Schumer'], correct: 0 },
+            { q: 'There are four amendments to the Constitution about who can vote. Describe one of them.', a: ['Citizens 18 and older can vote', 'Only landowners can vote', 'Only men can vote', 'Only the wealthy can vote'], correct: 0 },
+            { q: 'What is one responsibility of a citizen?', a: ['To serve on a jury', 'To vote', 'To pay taxes', 'Any of these'], correct: 3 },
+            { q: 'Name one right only for United States citizens.', a: ['Vote in a federal election', 'Attend public school', 'Work anywhere in the U.S.', 'Drive a car'], correct: 0 },
+            { q: 'What do we show loyalty to when we say the Pledge of Allegiance?', a: ['The United States', 'Our state', 'Our city', 'Our school'], correct: 0 },
+            { q: 'What is one promise you make when you become a United States citizen?', a: ['To give up loyalty to other countries', 'To never travel', 'To vote in every election', 'To live in D.C.'], correct: 0 },
+            { q: 'How old do citizens have to be to vote for President?', a: ['Eighteen (18)', 'Sixteen (16)', 'Twenty-one (21)', 'Nineteen (19)'], correct: 0 },
+            { q: 'What are two ways that Americans can participate in their democracy?', a: ['Vote', 'Join a political party', 'Write to a Senator', 'All of these'], correct: 3 },
+            { q: 'When is the last day you can send in federal income tax forms?', a: ['April 15', 'January 1', 'December 31', 'July 4'], correct: 0 },
+            { q: 'What is the name of the President of the United States now?', a: ['Joe Biden', 'Donald Trump', 'Barack Obama', 'George Washington'], correct: 0 },
+            { q: 'What is the name of the Vice President of the United States now?', a: ['Kamala Harris', 'Mike Pence', 'Nancy Pelosi', 'Antony Blinken'], correct: 0 },
+            { q: 'Who is the Governor of your state now?', a: ['[State-specific]', 'The President', 'The Vice President', 'The Mayor'], correct: 0 },
+            { q: 'Who is the Speaker of the House of Representatives now?', a: ['Mike Johnson', 'Nancy Pelosi', 'Kevin McCarthy', 'Chuck Schumer'], correct: 0 },
+            { q: 'What is one major cabinet-level position?', a: ['Secretary of State', 'Mayor', 'Governor', 'President'], correct: 0 },
+            { q: 'What is the highest court in the United States?', a: ['The Supreme Court', 'The District Court', 'The Court of Appeals', 'The Federal Court'], correct: 0 },
+            { q: 'How many justices are on the Supreme Court?', a: ['Nine', 'Ten', 'Eight', 'Seven'], correct: 0 },
+            { q: 'Who is the Chief Justice of the United States now?', a: ['John Roberts', 'Clarence Thomas', 'Sonia Sotomayor', 'Neil Gorsuch'], correct: 0 },
+            { q: 'What did the Declaration of Independence do?', a: ['Announced our independence from Great Britain', 'Established the Constitution', 'Created the presidency', 'Ended the Civil War'], correct: 0 },
+            { q: 'What are two rights in the Declaration of Independence?', a: ['Life', 'Liberty', 'The pursuit of happiness', 'All of these'], correct: 3 },
+            { q: 'What is the national anthem of the United States?', a: ['The Star-Spangled Banner', 'America the Beautiful', 'God Bless America', 'My Country Tis of Thee'], correct: 0 }
+        ];
+
+        // Flashcard data (questions and answers)
+        const flashcards = civicsQuestions.map(q => ({
+            front: q.q,
+            back: q.a[q.correct]
+        }));
+
+        let currentMode = 'practice';
+        let currentQuestionIndex = 0;
+        let selectedAnswer = -1;
+        let practiceQuestions = [];
+        let userStats = { answered: 0, correct: 0, cards: 0 };
+
+        // Check authentication
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!Auth.requireAuth()) return;
+            loadStats();
+        });
+
+        function loadStats() {
+            const user = Auth.getCurrentUser();
+            if (!user) return;
+
+            // Update navigation
+            updateNavigation();
+
+            // Load saved progress
+            const progress = Storage.getCivicsProgress(user.id);
+            userStats.answered = progress.questionsAnswered || 0;
+            userStats.correct = progress.correctAnswers || 0;
+            userStats.cards = progress.completedFlashcards?.length || 0;
+
+            updateStatsDisplay();
+        }
+
+        function updateNavigation() {
+            const user = Auth.getCurrentUser();
+            const navAuth = document.getElementById('navAuth');
+            
+            if (user) {
+                navAuth.innerHTML = `
+                    <span class="user-greeting">Hello, ${user.fullName || user.email.split('@')[0]}</span>
+                    <button onclick="handleLogout()" class="btn btn-outline btn-sm">Logout</button>
+                `;
+            }
+        }
+
+        function handleLogout() {
+            Auth.logout();
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            
+            document.getElementById('practiceMode').style.display = mode === 'practice' ? 'block' : 'none';
+            document.getElementById('flashcardMode').style.display = mode === 'flashcards' ? 'block' : 'none';
+            document.getElementById('resultsCard').style.display = 'none';
+
+            document.getElementById('btnPractice').className = mode === 'practice' ? 'btn btn-primary' : 'btn btn-outline';
+            document.getElementById('btnFlashcards').className = mode === 'flashcards' ? 'btn btn-primary' : 'btn btn-outline';
+
+            if (mode === 'practice') {
+                resetPractice();
+            } else {
+                currentCardIndex = 0;
+                showCard(0);
+            }
+        }
+
+        // Practice Mode
+        function startPractice() {
+            // Shuffle questions
+            practiceQuestions = [...civicsQuestions].sort(() => Math.random() - 0.5).slice(0, 10);
+            currentQuestionIndex = 0;
+            userStats.answered = 0;
+            userStats.correct = 0;
+
+            document.getElementById('btnStart').style.display = 'none';
+            document.getElementById('btnCheck').style.display = 'block';
+
+            showQuestion();
+        }
+
+        function showQuestion() {
+            if (currentQuestionIndex >= practiceQuestions.length) {
+                showResults();
+                return;
+            }
+
+            const question = practiceQuestions[currentQuestionIndex];
+            
+            document.getElementById('questionNum').textContent = currentQuestionIndex + 1;
+            document.getElementById('questionText').textContent = question.q;
+
+            const optionsContainer = document.getElementById('answerOptions');
+            const letters = ['A', 'B', 'C', 'D'];
+            
+            optionsContainer.innerHTML = question.a.map((answer, index) => `
+                <div class="answer-option" onclick="selectAnswer(${index})" id="option${index}">
+                    <span class="option-letter">${letters[index]}</span>
+                    <span>${answer}</span>
+                </div>
+            `).join('');
+
+            selectedAnswer = -1;
+            document.getElementById('btnCheck').style.display = 'none';
+            document.getElementById('btnNext').style.display = 'none';
+        }
+
+        function selectAnswer(index) {
+            selectedAnswer = index;
+            
+            document.querySelectorAll('.answer-option').forEach((el, i) => {
+                el.classList.remove('selected');
+                if (i === index) el.classList.add('selected');
+            });
+
+            document.getElementById('btnCheck').style.display = 'block';
+        }
+
+        function checkAnswer() {
+            if (selectedAnswer < 0) return;
+
+            const question = practiceQuestions[currentQuestionIndex];
+            userStats.answered++;
+
+            // Mark answers
+            document.querySelectorAll('.answer-option').forEach((el, i) => {
+                el.style.pointerEvents = 'none';
+                if (i === question.correct) {
+                    el.classList.add('correct');
+                } else if (i === selectedAnswer && selectedAnswer !== question.correct) {
+                    el.classList.add('incorrect');
+                }
+            });
+
+            if (selectedAnswer === question.correct) {
+                userStats.correct++;
+            }
+
+            saveStats();
+            updateStatsDisplay();
+
+            document.getElementById('btnCheck').style.display = 'none';
+            document.getElementById('btnNext').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            showQuestion();
+        }
+
+        function showResults() {
+            const accuracy = userStats.answered > 0 ? Math.round((userStats.correct / userStats.answered) * 100) : 0;
+            
+            document.getElementById('finalScore').textContent = accuracy + '%';
+            
+            let message = '';
+            if (accuracy >= 80) {
+                message = 'Excellent! You\'re well prepared!';
+            } else if (accuracy >= 60) {
+                message = 'Good job! Keep practicing!';
+            } else {
+                message = 'Keep studying! Practice makes perfect!';
+            }
+            
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('practiceMode').innerHTML = '';
+            document.getElementById('resultsCard').style.display = 'block';
+        }
+
+        function resetPractice() {
+            setMode('practice');
+            location.reload();
+        }
+
+        // Flashcard Mode
+        let currentCardIndex = 0;
+
+        function showCard(index) {
+            if (index < 0 || index >= flashcards.length) return;
+            
+            currentCardIndex = index;
+            document.getElementById('flashcard').classList.remove('flipped');
+            
+            setTimeout(() => {
+                document.getElementById('flashcardFront').textContent = flashcards[index].front;
+                document.getElementById('flashcardBack').textContent = flashcards[index].back;
+            }, 300);
+        }
+
+        function flipCard() {
+            document.getElementById('flashcard').classList.toggle('flipped');
+        }
+
+        function nextCard() {
+            showCard(currentCardIndex + 1);
+        }
+
+        function previousCard() {
+            showCard(currentCardIndex - 1);
+        }
+
+        function markCardKnown() {
+            const user = Auth.getCurrentUser();
+            if (!user) return;
+
+            let progress = Storage.getCivicsProgress(user.id);
+            if (!progress.completedFlashcards) progress.completedFlashcards = [];
+
+            if (!progress.completedFlashcards.includes(currentCardIndex)) {
+                progress.completedFlashcards.push(currentCardIndex);
+                userStats.cards++;
+                Storage.updateCivicsProgress(user.id, progress);
+                updateStatsDisplay();
+            }
+
+            nextCard();
+        }
+
+        // Stats
+        function saveStats() {
+            const user = Auth.getCurrentUser();
+            if (!user) return;
+
+            Storage.updateCivicsProgress(user.id, {
+                questionsAnswered: userStats.answered,
+                correctAnswers: userStats.correct
+            });
+        }
+
+        function updateStatsDisplay() {
+            document.getElementById('questionsAnswered').textContent = userStats.answered;
+            document.getElementById('correctAnswers').textContent = userStats.correct;
+            document.getElementById('accuracy').textContent = userStats.answered > 0 
+                ? Math.round((userStats.correct / userStats.answered) * 100) + '%' 
+                : '0%';
+            document.getElementById('cardsStudied').textContent = userStats.cards;
+        }
+    </script>
+</body>
+</html>

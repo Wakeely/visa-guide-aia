@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visa Guide AI - Forms Center</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .form-section {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .form-section h3 {
+            font-size: 1.25rem;
+            color: var(--gray-900);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--gray-100);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .form-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid, .form-grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-help {
+            font-size: 0.85rem;
+            color: var(--gray-500);
+            margin-top: 0.25rem;
+        }
+        
+        .form-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-passport"></i>
+                <span>Visa Guide AI</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="forms.html" class="active">Forms</a>
+                <a href="documents.html">Documents</a>
+                <a href="chatbot.html">Assistant</a>
+                <a href="civics.html">Civics</a>
+            </div>
+            <div class="nav-auth" id="navAuth"></div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: var(--white); padding: 3rem 2rem;">
+        <div style="max-width: 1400px; margin: 0 auto;">
+            <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Immigration Forms</h1>
+            <p style="opacity: 0.9;">Complete and track your immigration application forms</p>
+        </div>
+    </div>
+
+    <!-- Forms Content -->
+    <div style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+        <!-- Progress Overview -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-body">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h3 style="margin: 0; color: var(--gray-900);">Application Progress</h3>
+                        <p style="margin: 0.5rem 0 0; color: var(--gray-500);">N-400 Application for Naturalization</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--primary);" id="overallProgress">0%</div>
+                        <div style="color: var(--gray-500);">Complete</div>
+                    </div>
+                </div>
+                <div class="progress-bar" style="height: 0.75rem; margin-top: 1rem;">
+                    <div class="progress-fill" id="progressBar" style="width: 0%;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.9rem; color: var(--gray-500);">
+                    <span id="sectionsCompleted">0 of 5 sections</span>
+                    <span id="lastSaved">Last saved: Never</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Selector -->
+        <div style="display: flex; gap: 1rem; margin-bottom: 2rem; overflow-x: auto; padding-bottom: 0.5rem;">
+            <button class="btn btn-primary" id="btnN400" onclick="showFormSection('n400')">
+                <i class="fas fa-file-alt"></i> N-400
+            </button>
+            <button class="btn btn-outline" id="btnDocument" onclick="showFormSection('document')">
+                <i class="fas fa-file"></i> Document Checklist
+            </button>
+        </div>
+
+        <!-- N-400 Form -->
+        <div id="n400Form">
+            <form id="n400FormElement" onsubmit="saveForm(event)">
+                <!-- Part 1: Name -->
+                <div class="form-section" id="section1">
+                    <div class="form-section-header">
+                        <h3>Part 1: Your Name</h3>
+                        <span class="badge badge-success" id="badge1">Complete</span>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="lastName">3.a. Family Name (Last Name)</label>
+                            <input type="text" id="lastName" placeholder="Enter your last name" onchange="updateProgress()">
+                        </div>
+                        <div class="form-group">
+                            <label for="firstName">3.b. Given Name (First Name)</label>
+                            <input type="text" id="firstName" placeholder="Enter your first name" onchange="updateProgress()">
+                        </div>
+                        <div class="form-group">
+                            <label for="middleName">3.c. Middle Name</label>
+                            <input type="text" id="middleName" placeholder="Enter middle name (if any)" onchange="updateProgress()">
+                        </div>
+                        <div class="form-group">
+                            <label for="suffix">3.d. Suffix</label>
+                            <select id="suffix" onchange="updateProgress()">
+                                <option value="">Select...</option>
+                                <option value="Jr">Jr</option>
+                                <option value="Sr">Sr</option>
+                                <option value="II">II</option>
+                                <option value="III">III</option>
+                                <option value="IV">IV</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Part 2: Personal Information -->
+                <div class="form-section" id="section2">
+                    <div class="form-section-header">
+                        <h3>Part 2: Personal Information</h3>
+                        <span class="badge badge-success" id="badge2">Complete</span>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="dateOfBirth">4. Date of Birth (mm/dd/yyyy)</label>
+                            <input type="date" id="dateOfBirth" onchange="updateProgress()">
+                        </div>
+                        <div class="form-group">
+                            <label for="countryOfBirth">5. Country of Birth</label>
+                            <input type="text" id="countryOfBirth" placeholder="Enter country of birth" onchange="updateProgress()">
+                        </div>
+                        <div class="form-group">
+                            <label for="countryOfNationality">6. Country of Citizenship/Nationality</label>
+                            <input type="text" id="countryOfNationality" placeholder="Enter country" onchange="updateProgress()">
+                        </div>
+                        <div class="form-group">
+                            <label for="ssn">7. Social Security Number</label>
+                            <input type="text" id="ssn" placeholder="XXX-XX-XXXX" onchange="updateProgress()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Part 3: Place of Residence -->
+                <div class="form-section" id="section3">
+                    <div class="form-section-header">
+                        <h3>Part 3: Place of Residence</h3>
+                        <span class="badge badge-success" id="badge3">Complete</span>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="streetAddress">8.a. Street Number and Name</label>
+                            <input type="text" id="streetAddress" placeholder="Enter street address" onchange="updateProgress()">
+                        </div>
+                        <div class="form-group">
+                            <label for="aptSteFlc">8.b. Apt., Ste., Flc.</label>
+                            <input type="text" id="aptSteFlc" placeholder="Apt, Ste, or Flc" onchange="updateProgress()">
+                        </div>
+                        <div class="form-group">
+                            <label for="city">8.c. City or Town</label>
+                            <input type="text" id="city" placeholder="Enter city" onchange="updateProgress()">
+                        </div>
+                        <div class="form-group">
+                            <label for="state">8.d. State</label>
+                            <select id="state" onchange="updateProgress()">
+                                <option value="">Select State...</option>
+                                <option value="AL">Alabama</option>
+                                <option value="AK">Alaska</option>
+                                <option value="AZ">Arizona</option>
+                                <option value="AR">Arkansas</option>
+                                <option value="CA">California</option>
+                                <option value="CO">Colorado</option>
+                                <option value="CT">Connecticut</option>
+                                <option value="DE">Delaware</option>
+                                <option value="FL">Florida</option>
+                                <option value="GA">Georgia</option>
+                                <option value="HI">Hawaii</option>
+                                <option value="ID">Idaho</option>
+                                <option value="IL">Illinois</option>
+                                <option value="IN">Indiana</option>
+                                <option value="IA">Iowa</option>
+                                <option value="KS">Kansas</option>
+                                <option value="KY">Kentucky</option>
+                                <option value="LA">Louisiana</option>
+                                <option value="ME">Maine</option>
+                                <option value="MD">Maryland</option>
+                                <option value="MA">Massachusetts</option>
+                                <option value="MI">Michigan</option>
+                                <option value="MN">Minnesota</option>
+                                <option value="MS">Mississippi</option>
+                                <option value="MO">Missouri</option>
+                                <option value="MT">Montana</option>
+                                <option value="NE">Nebraska</option>
+                                <option value="NV">Nevada</option>
+                                <option value="NH">New Hampshire</option>
+                                <option value="NJ">New Jersey</option>
+                                <option value="NM">New Mexico</option>
+                                <option value="NY">New York</option>
+                                <option value="NC">North Carolina</option>
+                                <option value="ND">North Dakota</option>
+                                <option value="OH">Ohio</option>
+                                <option value="OK">Oklahoma</option>
+                                <option value="OR">Oregon</option>
+                                <option value="PA">Pennsylvania</option>
+                                <option value="RI">Rhode Island</option>
+                                <option value="SC">South Carolina</option>
+                                <option value="SD">South Dakota</option>
+                                <option value="TN">Tennessee</option>
+                                <option value="TX">Texas</option>
+                                <option value="UT">Utah</option>
+                                <option value="VT">Vermont</option>
+                                <option value="VA">Virginia</option>
+                                <option value="WA">Washington</option>
+                                <option value="WV">West Virginia</option>
+                                <option value="WI">Wisconsin</option>
+                                <option value="WY">Wyoming</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="zipCode">8.e. ZIP Code</label>
+                            <input type="text" id="zipCode" placeholder="Enter ZIP code" onchange="updateProgress()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Part 4: Eligibility Information -->
+                <div class="form-section" id="section4">
+                    <div class="form-section-header">
+                        <h3>Part 4: Eligibility Information</h3>
+                        <span class="badge badge-success" id="badge4">Complete</span>
+                    </div>
+                    <div class="form-group">
+                        <label>9. I am at least 18 years of age:</label>
+                        <div style="display: flex; gap: 2rem; margin-top: 0.5rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="radio" name="age18" value="yes" onchange="updateProgress()"> Yes
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="radio" name="age18" value="no" onchange="updateProgress()"> No
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>10. I am a lawful permanent resident (green card holder):</label>
+                        <div style="display: flex; gap: 2rem; margin-top: 0.5rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="radio" name="lpr" value="yes" onchange="updateProgress()"> Yes
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="radio" name="lpr" value="no" onchange="updateProgress()"> No
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="dateOfEntry">11. Date of Initial Entry into the United States (mm/dd/yyyy)</label>
+                        <input type="date" id="dateOfEntry" onchange="updateProgress()">
+                    </div>
+                </div>
+
+                <!-- Part 5: Additional Information -->
+                <div class="form-section" id="section5">
+                    <div class="form-section-header">
+                        <h3>Part 5: Additional Information</h3>
+                        <span class="badge badge-success" id="badge5">Complete</span>
+                    </div>
+                    <div class="form-group">
+                        <label>12. Have you ever been arrested, detained, or confined by any authority?</label>
+                        <div style="display: flex; gap: 2rem; margin-top: 0.5rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="radio" name="arrested" value="yes" onchange="updateProgress()"> Yes
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="radio" name="arrested" value="no" onchange="updateProgress()"> No
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>13. Have you ever been claimed to be a U.S. citizen?</label>
+                        <div style="display: flex; gap: 2rem; margin-top: 0.5rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="radio" name="claimedCitizen" value="yes" onchange="updateProgress()"> Yes
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="radio" name="claimedCitizen" value="no" onchange="updateProgress()"> No
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>14. Have you ever renounced U.S. citizenship?</label>
+                        <div style="display: flex; gap: 2rem; margin-top: 0.5rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="radio" name="renounced" value="yes" onchange="updateProgress()"> Yes
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="radio" name="renounced" value="no" onchange="updateProgress()"> No
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions" style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Save Progress
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="exportForm()">
+                        <i class="fas fa-file-export"></i>
+                        Export as PDF
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Document Checklist -->
+        <div id="documentForm" style="display: none;">
+            <div class="form-section">
+                <h3>Document Checklist</h3>
+                <p style="color: var(--gray-500); margin-bottom: 1.5rem;">Use this checklist to track required documents for your application.</p>
+                
+                <div id="documentChecklist">
+                    <!-- Checklist items will be generated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Check authentication
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!Auth.requireAuth()) return;
+            loadForm();
+        });
+
+        function loadForm() {
+            const user = Auth.getCurrentUser();
+            if (!user) return;
+
+            // Update navigation
+            updateNavigation();
+
+            // Load saved form data
+            loadSavedForm();
+
+            // Generate document checklist
+            generateDocumentChecklist();
+        }
+
+        function updateNavigation() {
+            const user = Auth.getCurrentUser();
+            const navAuth = document.getElementById('navAuth');
+            
+            if (user) {
+                navAuth.innerHTML = `
+                    <span class="user-greeting">Hello, ${user.fullName || user.email.split('@')[0]}</span>
+                    <button onclick="handleLogout()" class="btn btn-outline btn-sm">Logout</button>
+                `;
+            }
+        }
+
+        function handleLogout() {
+            Auth.logout();
+        }
+
+        function showFormSection(section) {
+            document.getElementById('n400Form').style.display = section === 'n400' ? 'block' : 'none';
+            document.getElementById('documentForm').style.display = section === 'document' ? 'block' : 'none';
+            
+            document.getElementById('btnN400').className = section === 'n400' ? 'btn btn-primary' : 'btn btn-outline';
+            document.getElementById('btnDocument').className = section === 'document' ? 'btn btn-primary' : 'btn btn-outline';
+        }
+
+        function loadSavedForm() {
+            const user = Auth.getCurrentUser();
+            if (!user) return;
+
+            const formData = Storage.getFormData(user.id, 'n400');
+            if (!formData || !formData.data) return;
+
+            // Load saved values
+            Object.keys(formData.data).forEach(field => {
+                const element = document.getElementById(field);
+                if (element) {
+                    if (element.type === 'radio') {
+                        const radio = document.querySelector(`input[name="${field}"][value="${formData.data[field]}"]`);
+                        if (radio) radio.checked = true;
+                    } else {
+                        element.value = formData.data[field];
+                    }
+                }
+            });
+
+            // Update progress
+            updateProgress();
+
+            // Update last saved time
+            if (formData.updatedAt) {
+                const date = new Date(formData.updatedAt);
+                document.getElementById('lastSaved').textContent = 'Last saved: ' + date.toLocaleString();
+            }
+        }
+
+        function updateProgress() {
+            const user = Auth.getCurrentUser();
+            if (!user) return;
+
+            // Count completed sections
+            let completedSections = 0;
+            let totalSections = 5;
+            
+            for (let i = 1; i <= totalSections; i++) {
+                const section = document.getElementById(`section${i}`);
+                const inputs = section.querySelectorAll('input, select');
+                let filledCount = 0;
+                let requiredCount = 0;
+                
+                inputs.forEach(input => {
+                    // Skip some optional fields
+                    if (input.id === 'middleName' || input.id === 'aptSteFlc' || input.id === 'suffix') return;
+                    
+                    requiredCount++;
+                    if (input.type === 'radio') {
+                        const name = input.name;
+                        const checked = section.querySelector(`input[name="${name}"]:checked`);
+                        if (checked) filledCount++;
+                    } else if (input.value && input.value.trim() !== '') {
+                        filledCount++;
+                    }
+                });
+
+                const badge = document.getElementById(`badge${i}`);
+                if (filledCount >= requiredCount * 0.8) {
+                    completedSections++;
+                    badge.textContent = 'Complete';
+                    badge.className = 'badge badge-success';
+                } else if (filledCount > 0) {
+                    badge.textContent = 'In Progress';
+                    badge.className = 'badge badge-warning';
+                } else {
+                    badge.textContent = 'Not Started';
+                    badge.className = 'badge badge-secondary';
+                }
+            }
+
+            // Calculate overall progress
+            const overallProgress = Math.round((completedSections / totalSections) * 100);
+            document.getElementById('overallProgress').textContent = overallProgress + '%';
+            document.getElementById('progressBar').style.width = overallProgress + '%';
+            document.getElementById('sectionsCompleted').textContent = `${completedSections} of ${totalSections} sections`;
+
+            // Save progress
+            saveFormData(user.id);
+        }
+
+        function saveFormData(userId) {
+            const formData = {};
+            const inputs = document.querySelectorAll('#n400Form input, #n400Form select');
+            
+            inputs.forEach(input => {
+                if (input.type === 'radio') {
+                    const checked = document.querySelector(`input[name="${input.name}"]:checked`);
+                    if (checked) {
+                        formData[input.name] = checked.value;
+                    }
+                } else if (input.id) {
+                    formData[input.id] = input.value;
+                }
+            });
+
+            Storage.saveFormData(userId, 'n400', formData);
+        }
+
+        function saveForm(event) {
+            event.preventDefault();
+            
+            const user = Auth.getCurrentUser();
+            if (!user) return;
+
+            saveFormData(user.id);
+            
+            // Update last saved time
+            document.getElementById('lastSaved').textContent = 'Last saved: ' + new Date().toLocaleString();
+            
+            alert('Form saved successfully!');
+        }
+
+        function generateDocumentChecklist() {
+            const checklistItems = [
+                'Green Card (Form I-551)',
+                'Driver\'s License or State ID',
+                'Passport',
+                'Birth Certificate',
+                'Marriage Certificate (if applicable)',
+                'Divorce Decree (if applicable)',
+                'Military Records (if applicable)',
+                'Tax Records (last 3 years)',
+                'Photos (2x2 inches)',
+                'Travel Outside U.S. Documentation'
+            ];
+
+            const container = document.getElementById('documentChecklist');
+            container.innerHTML = checklistItems.map((item, index) => `
+                <div style="display: flex; align-items: center; padding: 1rem; background: var(--gray-50); border-radius: var(--radius); margin-bottom: 0.75rem;">
+                    <input type="checkbox" id="doc${index}" style="margin-right: 1rem; width: auto;">
+                    <label for="doc${index}" style="flex: 1; cursor: pointer;">${item}</label>
+                </div>
+            `).join('');
+        }
+
+        function exportForm() {
+            alert('PDF export feature - In a full implementation, this would generate a PDF of your completed form data.');
+        }
+    </script>
+</body>
+</html>

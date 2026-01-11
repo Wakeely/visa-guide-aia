@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visa Guide AI - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-passport"></i>
+                <span>Visa Guide AI</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="dashboard.html" class="active">Dashboard</a>
+                <a href="forms.html">Forms</a>
+                <a href="documents.html">Documents</a>
+                <a href="chatbot.html">Assistant</a>
+                <a href="civics.html">Civics</a>
+            </div>
+            <div class="nav-auth" id="navAuth">
+                <a href="auth.html" class="btn btn-outline">Sign In</a>
+                <a href="auth.html?tab=register" class="btn btn-primary">Get Started</a>
+            </div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div style="max-width: 1400px; margin: 0 auto;">
+            <h1 id="welcomeTitle">Welcome to Your Dashboard</h1>
+            <p>Track your progress and manage your immigration journey</p>
+        </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-content" style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+        <!-- Quick Stats -->
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="stat-value" id="formsProgress">0%</div>
+                <div class="stat-label">Forms Progress</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+                    <i class="fas fa-folder-open"></i>
+                </div>
+                <div class="stat-value" id="documentsCount">0</div>
+                <div class="stat-label">Documents Uploaded</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                    <i class="fas fa-globe-americas"></i>
+                </div>
+                <div class="stat-value" id="civicsScore">0%</div>
+                <div class="stat-label">Civics Score</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-value" id="daysActive">0</div>
+                <div class="stat-label">Days Active</div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-top: 2rem;">
+            <!-- Left Column -->
+            <div>
+                <!-- Quick Actions -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <div class="card-header">
+                        <h2><i class="fas fa-bolt" style="color: var(--primary); margin-right: 0.5rem;"></i> Quick Actions</h2>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <a href="forms.html" class="btn btn-outline" style="justify-content: flex-start;">
+                                <i class="fas fa-edit"></i>
+                                Continue Forms
+                            </a>
+                            <a href="documents.html" class="btn btn-outline" style="justify-content: flex-start;">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                Upload Document
+                            </a>
+                            <a href="civics.html" class="btn btn-outline" style="justify-content: flex-start;">
+                                <i class="fas fa-graduation-cap"></i>
+                                Practice Civics
+                            </a>
+                            <a href="chatbot.html" class="btn btn-outline" style="justify-content: flex-start;">
+                                <i class="fas fa-comments"></i>
+                                Ask Assistant
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-history" style="color: var(--primary); margin-right: 0.5rem;"></i> Recent Activity</h2>
+                    </div>
+                    <div class="card-body" id="recentActivity">
+                        <p style="color: var(--gray-500); text-align: center; padding: 2rem;">
+                            <i class="fas fa-clock" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                            No recent activity. Start by completing a form or uploading a document.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div>
+                <!-- Profile Summary -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <div class="card-header">
+                        <h2><i class="fas fa-user" style="color: var(--primary); margin-right: 0.5rem;"></i> Profile</h2>
+                    </div>
+                    <div class="card-body" style="text-align: center;">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                            <i class="fas fa-user" style="font-size: 2rem; color: var(--white);"></i>
+                        </div>
+                        <h3 id="userName" style="margin-bottom: 0.5rem;">User</h3>
+                        <p id="userEmail" style="color: var(--gray-500); font-size: 0.9rem; margin-bottom: 1rem;">email@example.com</p>
+                        <button onclick="handleLogout()" class="btn btn-outline btn-sm">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Helpful Resources -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-link" style="color: var(--primary); margin-right: 0.5rem;"></i> Resources</h2>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <a href="#" class="resource-link" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: var(--gray-50); border-radius: var(--radius); transition: var(--transition);">
+                                <i class="fas fa-external-link-alt" style="color: var(--primary);"></i>
+                                <span>USCIS Website</span>
+                            </a>
+                            <a href="#" class="resource-link" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: var(--gray-50); border-radius: var(--radius); transition: var(--transition);">
+                                <i class="fas fa-external-link-alt" style="color: var(--primary);"></i>
+                                <span>Immigration Forms</span>
+                            </a>
+                            <a href="#" class="resource-link" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: var(--gray-50); border-radius: var(--radius); transition: var(--transition);">
+                                <i class="fas fa-external-link-alt" style="color: var(--primary);"></i>
+                                <span>Processing Times</span>
+                            </a>
+                            <a href="#" class="resource-link" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: var(--gray-50); border-radius: var(--radius); transition: var(--transition);">
+                                <i class="fas fa-external-link-alt" style="color: var(--primary);"></i>
+                                <span>Find a Doctor</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Check authentication
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!Auth.requireAuth()) return;
+            loadDashboard();
+        });
+
+        function loadDashboard() {
+            const user = Auth.getCurrentUser();
+            if (!user) return;
+
+            // Update welcome message
+            document.getElementById('welcomeTitle').textContent = `Welcome, ${user.fullName || user.email.split('@')[0]}!`;
+            document.getElementById('userName').textContent = user.fullName || user.email.split('@')[0];
+            document.getElementById('userEmail').textContent = user.email;
+
+            // Update navigation
+            updateNavigation();
+
+            // Load stats
+            loadStats(user.id);
+        }
+
+        function loadStats(userId) {
+            // Forms progress
+            const forms = Storage.getAllForms(userId);
+            let formCount = 0;
+            let totalProgress = 0;
+            
+            Object.keys(forms).forEach(key => {
+                if (forms[key] && forms[key].data) {
+                    formCount++;
+                    // Calculate progress based on filled fields
+                    const data = forms[key].data;
+                    const totalFields = Object.keys(data).length;
+                    const filledFields = Object.values(data).filter(v => v && v !== '').length;
+                    totalProgress += (filledFields / Math.max(totalFields, 1)) * 100;
+                }
+            });
+            
+            const avgProgress = formCount > 0 ? Math.round(totalProgress / formCount) : 0;
+            document.getElementById('formsProgress').textContent = avgProgress + '%';
+
+            // Documents count
+            const documents = Storage.getDocuments(userId);
+            document.getElementById('documentsCount').textContent = documents.length;
+
+            // Civics score
+            const civicsProgress = Storage.getCivicsProgress(userId);
+            const civicsScore = civicsProgress.questionsAnswered > 0 
+                ? Math.round((civicsProgress.correctAnswers / civicsProgress.questionsAnswered) * 100)
+                : 0;
+            document.getElementById('civicsScore').textContent = civicsScore + '%';
+
+            // Days active (based on account creation)
+            const userData = Storage.findUserById(userId);
+            if (userData && userData.createdAt) {
+                const createdDate = new Date(userData.createdAt);
+                const now = new Date();
+                const days = Math.floor((now - createdDate) / (1000 * 60 * 60 * 24));
+                document.getElementById('daysActive').textContent = Math.max(1, days);
+            } else {
+                document.getElementById('daysActive').textContent = '1';
+            }
+        }
+
+        function updateNavigation() {
+            const user = Auth.getCurrentUser();
+            const navAuth = document.getElementById('navAuth');
+            
+            if (user) {
+                navAuth.innerHTML = `
+                    <span class="user-greeting">Hello, ${user.fullName || user.email.split('@')[0]}</span>
+                    <button onclick="handleLogout()" class="btn btn-outline btn-sm">Logout</button>
+                `;
+            }
+        }
+
+        function handleLogout() {
+            Auth.logout();
+        }
+
+        function toggleMobileMenu() {
+            // Mobile menu toggle - can be implemented
+            alert('Mobile menu');
+        }
+    </script>
+</body>
+</html>

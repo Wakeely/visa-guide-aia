@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visa Guide AI - Sign In or Register</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+        
+        .auth-container {
+            width: 100%;
+            max-width: 480px;
+        }
+        
+        .auth-back {
+            margin-bottom: 1.5rem;
+        }
+        
+        .auth-back a {
+            color: var(--white);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .auth-back a:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-container">
+            <div class="auth-back">
+                <a href="index.html">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Home
+                </a>
+            </div>
+            
+            <div class="auth-card">
+                <div class="auth-header">
+                    <a href="index.html" class="nav-logo" style="justify-content: center; margin-bottom: 1rem;">
+                        <i class="fas fa-passport"></i>
+                        <span>Visa Guide AI</span>
+                    </a>
+                    <h1 id="authTitle">Welcome Back</h1>
+                    <p id="authSubtitle">Sign in to access your immigration dashboard</p>
+                </div>
+                
+                <div class="auth-tabs">
+                    <div class="auth-tab active" data-tab="login" onclick="switchTab('login')">Sign In</div>
+                    <div class="auth-tab" data-tab="register" onclick="switchTab('register')">Create Account</div>
+                </div>
+                
+                <div class="auth-body">
+                    <!-- Login Form -->
+                    <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
+                        <div id="loginAlert"></div>
+                        
+                        <div class="form-group">
+                            <label for="loginEmail">Email Address</label>
+                            <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="loginPassword">Password</label>
+                            <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                        </div>
+                        
+                        <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="rememberMe" style="width: auto;">
+                            <label for="rememberMe" style="margin: 0; font-weight: normal;">Remember me</label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" style="width: 100%;" id="loginBtn">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Sign In
+                        </button>
+                    </form>
+                    
+                    <!-- Register Form -->
+                    <form id="registerForm" class="auth-form" onsubmit="handleRegister(event)">
+                        <div id="registerAlert"></div>
+                        
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input type="text" id="fullName" placeholder="Enter your full name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerEmail">Email Address</label>
+                            <input type="email" id="registerEmail" placeholder="Enter your email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerPassword">Password</label>
+                            <input type="password" id="registerPassword" placeholder="Create a password (min 6 characters)" required minlength="6">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" style="width: 100%;" id="registerBtn">
+                            <i class="fas fa-user-plus"></i>
+                            Create My Free Account
+                        </button>
+                    </form>
+                    
+                    <!-- Forgot Password Form -->
+                    <form id="forgotForm" class="auth-form" onsubmit="handleForgotPassword(event)">
+                        <div id="forgotAlert"></div>
+                        
+                        <div style="text-align: center; margin-bottom: 1.5rem;">
+                            <i class="fas fa-key" style="font-size: 3rem; color: var(--primary);"></i>
+                            <p style="margin-top: 1rem; color: var(--gray-600);">Enter your email address and we'll send you a link to reset your password.</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="forgotEmail">Email Address</label>
+                            <input type="email" id="forgotEmail" placeholder="Enter your email" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" style="width: 100%;" id="forgotBtn">
+                            <i class="fas fa-paper-plane"></i>
+                            Send Reset Link
+                        </button>
+                        
+                        <p style="text-align: center; margin-top: 1.5rem;">
+                            <a href="#" onclick="switchTab('login'); return false;" style="color: var(--primary);">
+                                <i class="fas fa-arrow-left"></i>
+                                Back to Sign In
+                            </a>
+                        </p>
+                    </form>
+                </div>
+                
+                <div class="auth-footer">
+                    <p id="authFooterText">Don't have an account? <a href="#" onclick="switchTab('register'); return false;">Create one now</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Check if already logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            Auth.redirectIfLoggedIn();
+            
+            // Check URL parameter for tab
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('tab') === 'register') {
+                switchTab('register');
+            }
+        });
+
+        function switchTab(tab) {
+            // Update tabs
+            document.querySelectorAll('.auth-tab').forEach(t => {
+                t.classList.remove('active');
+                if (t.dataset.tab === tab) t.classList.add('active');
+            });
+            
+            // Update forms
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            document.getElementById(tab + 'Form').classList.add('active');
+            
+            // Update header
+            const title = document.getElementById('authTitle');
+            const subtitle = document.getElementById('authSubtitle');
+            const footerText = document.getElementById('authFooterText');
+            
+            if (tab === 'login') {
+                title.textContent = 'Welcome Back';
+                subtitle.textContent = 'Sign in to access your immigration dashboard';
+                footerText.innerHTML = 'Don\'t have an account? <a href="#" onclick="switchTab(\'register\'); return false;">Create one now</a>';
+            } else if (tab === 'register') {
+                title.textContent = 'Create Your Account';
+                subtitle.textContent = 'Start your immigration journey today - it\'s free!';
+                footerText.innerHTML = 'Already have an account? <a href="#" onclick="switchTab(\'login\'); return false;">Sign in here</a>';
+            } else if (tab === 'forgot') {
+                title.textContent = 'Reset Password';
+                subtitle.textContent = 'We\'ll help you get back into your account';
+            }
+            
+            // Clear alerts
+            document.getElementById('loginAlert').innerHTML = '';
+            document.getElementById('registerAlert').innerHTML = '';
+            document.getElementById('forgotAlert').innerHTML = '';
+        }
+
+        function showAlert(containerId, type, message) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `
+                <div class="alert alert-${type}">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            const btn = document.getElementById('loginBtn');
+            btn.innerHTML = '<div class="spinner"></div> Signing in...';
+            btn.disabled = true;
+            
+            try {
+                const result = await Auth.login(email, password);
+                
+                if (result.success) {
+                    showAlert('loginAlert', 'success', 'Login successful! Redirecting to dashboard...');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                } else {
+                    showAlert('loginAlert', 'danger', result.message);
+                }
+            } catch (error) {
+                showAlert('loginAlert', 'danger', 'An error occurred. Please try again.');
+            }
+            
+            btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+            btn.disabled = false;
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+            
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            const btn = document.getElementById('registerBtn');
+            btn.innerHTML = '<div class="spinner"></div> Creating account...';
+            btn.disabled = true;
+            
+            try {
+                const result = await Auth.register(email, password, confirmPassword, fullName);
+                
+                if (result.success) {
+                    showAlert('registerAlert', 'success', 'Account created successfully! Redirecting to dashboard...');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                } else {
+                    showAlert('registerAlert', 'danger', result.message);
+                }
+            } catch (error) {
+                showAlert('registerAlert', 'danger', 'An error occurred. Please try again.');
+            }
+            
+            btn.innerHTML = '<i class="fas fa-user-plus"></i> Create My Free Account';
+            btn.disabled = false;
+        }
+
+        function handleForgotPassword(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('forgotEmail').value.trim();
+            
+            // Check if email exists
+            const user = Storage.findUserByEmail(email);
+            
+            if (!user) {
+                showAlert('forgotAlert', 'danger', 'No account found with this email address.');
+                return;
+            }
+            
+            // In a real app, this would send an email
+            // For demo, we'll show a success message
+            showAlert('forgotAlert', 'success', 'Password reset link sent! (Demo: Use your current password to login)');
+            
+            setTimeout(() => {
+                switchTab('login');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

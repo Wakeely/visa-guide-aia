@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visa Guide AI - Documents</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .upload-zone {
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--radius-lg);
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--gray-50);
+        }
+        
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: var(--white);
+        }
+        
+        .upload-zone.dragover {
+            border-color: var(--primary);
+            background: rgba(30, 64, 175, 0.05);
+        }
+        
+        .upload-zone i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .document-category {
+            margin-bottom: 2rem;
+        }
+        
+        .document-category h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--gray-800);
+        }
+        
+        .document-category h3 i {
+            color: var(--primary);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray-500);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: var(--gray-300);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-passport"></i>
+                <span>Visa Guide AI</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="forms.html">Forms</a>
+                <a href="documents.html" class="active">Documents</a>
+                <a href="chatbot.html">Assistant</a>
+                <a href="civics.html">Civics</a>
+            </div>
+            <div class="nav-auth" id="navAuth"></div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: var(--white); padding: 3rem 2rem;">
+        <div style="max-width: 1400px; margin: 0 auto;">
+            <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Document Manager</h1>
+            <p style="opacity: 0.9;">Upload, organize, and manage your immigration documents</p>
+        </div>
+    </div>
+
+    <!-- Documents Content -->
+    <div style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+        <!-- Upload Section -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header">
+                <h2><i class="fas fa-cloud-upload-alt" style="color: var(--primary); margin-right: 0.5rem;"></i> Upload Documents</h2>
+            </div>
+            <div class="card-body">
+                <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>Drop files here or click to upload</h3>
+                    <p style="color: var(--gray-500);">Supported formats: PDF, JPG, PNG, DOC (Max 10MB)</p>
+                </div>
+                <input type="file" id="fileInput" style="display: none;" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="handleFileSelect(event)">
+                
+                <!-- Upload Progress -->
+                <div id="uploadProgress" style="display: none; margin-top: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span id="uploadFileName">Uploading...</span>
+                        <span id="uploadPercent">0%</span>
+                    </div>
+                    <div class="progress-bar" style="height: 0.5rem;">
+                        <div class="progress-fill" id="uploadProgressBar" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Filter -->
+        <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; overflow-x: auto; padding-bottom: 0.5rem;">
+            <button class="btn btn-primary" id="filterAll" onclick="filterDocuments('all')">
+                <i class="fas fa-folder"></i> All
+            </button>
+            <button class="btn btn-outline" id="filterIdentity" onclick="filterDocuments('identity')">
+                <i class="fas fa-id-card"></i> Identity
+            </button>
+            <button class="btn btn-outline" id="filterImmigration" onclick="filterDocuments('immigration')">
+                <i class="fas fa-file-alt"></i> Immigration
+            </button>
+            <button class="btn btn-outline" id="filterFinancial" onclick="filterDocuments('financial')">
+                <i class="fas fa-dollar-sign"></i> Financial
+            </button>
+            <button class="btn btn-outline" id="filterOther" onclick="filterDocuments('other')">
+                <i class="fas fa-folder-open"></i> Other
+            </button>
+        </div>
+
+        <!-- Documents Grid -->
+        <div id="documentsContainer">
+            <div class="empty-state">
+                <i class="fas fa-folder-open"></i>
+                <h3>No documents uploaded yet</h3>
+                <p>Upload your first document using the upload zone above</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Document Preview Modal -->
+    <div class="modal-overlay" id="previewModal">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2 id="previewTitle">Document Preview</h2>
+                <button class="modal-close" onclick="closePreviewModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="previewContent">
+                <!-- Preview content will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closePreviewModal()">Close</button>
+                <button class="btn btn-danger" id="deleteBtn" onclick="deleteDocument()">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        let currentFilter = 'all';
+        let currentDocument = null;
+
+        // Check authentication
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!Auth.requireAuth()) return;
+            loadDocuments();
+            setupDragAndDrop();
+        });
+
+        function loadDocuments() {
+            const user = Auth.getCurrentUser();
+            if (!user) return;
+
+            // Update navigation
+            updateNavigation();
+
+            // Get documents
+            const documents = Storage.getDocuments(user.id);
+            renderDocuments(documents);
+        }
+
+        function updateNavigation() {
+            const user = Auth.getCurrentUser();
+            const navAuth = document.getElementById('navAuth');
+            
+            if (user) {
+                navAuth.innerHTML = `
+                    <span class="user-greeting">Hello, ${user.fullName || user.email.split('@')[0]}</span>
+                    <button onclick="handleLogout()" class="btn btn-outline btn-sm">Logout</button>
+                `;
+            }
+        }
+
+        function handleLogout() {
+            Auth.logout();
+        }
+
+        function setupDragAndDrop() {
+            const zone = document.getElementById('uploadZone');
+            
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('dragover');
+            });
+            
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('dragover');
+            });
+            
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                handleFiles(files);
+            });
+        }
+
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            const user = Auth.getCurrentUser();
+            if (!user) return;
+
+            Array.from(files).forEach(file => {
+                // Validate file
+                const validTypes = ['application/pdf', 'image/jpeg', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+                if (!validTypes.includes(file.type)) {
+                    alert(`Invalid file type: ${file.name}. Please upload PDF, JPG, PNG, or DOC files.`);
+                    return;
+                }
+
+                if (file.size > 10 * 1024 * 1024) {
+                    alert(`File too large: ${file.name}. Maximum size is 10MB.`);
+                    return;
+                }
+
+                // Show progress
+                showUploadProgress(file.name);
+
+                // Simulate upload (in real app, this would upload to server)
+                setTimeout(() => {
+                    // Determine category based on file name
+                    const category = determineCategory(file.name);
+                    
+                    // Store document metadata (in real app, store file on server)
+                    const document = Storage.addDocument(user.id, {
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                        category: category,
+                        dataUrl: null // In real app, store file URL
+                    });
+
+                    // For demo, create a placeholder
+                    document.dataUrl = createPlaceholder(file);
+                    Storage.deleteDocument(user.id, document.id);
+                    Storage.addDocument(user.id, {
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                        category: category,
+                        dataUrl: createPlaceholder(file)
+                    });
+
+                    hideUploadProgress();
+                    loadDocuments();
+                }, 1000);
+            });
+        }
+
+        function determineCategory(fileName) {
+            const name = fileName.toLowerCase();
+            if (name.includes('passport') || name.includes('license') || name.includes('id') || name.includes('birth')) {
+                return 'identity';
+            } else if (name.includes('green') || name.includes('i-') || name.includes('visa') || name.includes('permit')) {
+                return 'immigration';
+            } else if (name.includes('tax') || name.includes('bank') || name.includes('pay')) {
+                return 'financial';
+            }
+            return 'other';
+        }
+
+        function createPlaceholder(file) {
+            // Create a simple placeholder for demo purposes
+            // In real app, this would be the actual file data URL
+            return `data:text/plain;base64,${btoa('Placeholder for: ' + file.name)}`;
+        }
+
+        function showUploadProgress(fileName) {
+            document.getElementById('uploadProgress').style.display = 'block';
+            document.getElementById('uploadFileName').textContent = fileName;
+            document.getElementById('uploadPercent').textContent = '50%';
+            document.getElementById('uploadProgressBar').style.width = '50%';
+        }
+
+        function hideUploadProgress() {
+            document.getElementById('uploadProgress').style.display = 'none';
+        }
+
+        function filterDocuments(category) {
+            currentFilter = category;
+            
+            // Update button styles
+            const buttons = ['filterAll', 'filterIdentity', 'filterImmigration', 'filterFinancial', 'filterOther'];
+            buttons.forEach(btn => {
+                const button = document.getElementById(btn);
+                if (btn === category || (category === 'all' && btn === 'filterAll')) {
+                    button.className = 'btn btn-primary';
+                } else {
+                    button.className = 'btn btn-outline';
+                }
+            });
+
+            // Filter and render
+            const user = Auth.getCurrentUser();
+            if (!user) return;
+
+            let documents = Storage.getDocuments(user.id);
+            
+            if (category !== 'all') {
+                documents = documents.filter(d => d.category === category);
+            }
+            
+            renderDocuments(documents);
+        }
+
+        function renderDocuments(documents) {
+            const container = document.getElementById('documentsContainer');
+            
+            if (documents.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <h3>No documents found</h3>
+                        <p>${currentFilter === 'all' ? 'Upload your first document using the upload zone above' : 'No documents in this category'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Group by category
+            const grouped = {};
+            documents.forEach(doc => {
+                if (!grouped[doc.category]) {
+                    grouped[doc.category] = [];
+                }
+                grouped[doc.category].push(doc);
+            });
+
+            // Render grouped documents
+            let html = '';
+            const categories = {
+                identity: { icon: 'id-card', title: 'Identity Documents' },
+                immigration: { icon: 'file-alt', title: 'Immigration Documents' },
+                financial: { icon: 'dollar-sign', title: 'Financial Documents' },
+                other: { icon: 'folder', title: 'Other Documents' }
+            };
+
+            Object.keys(grouped).forEach(category => {
+                html += `
+                    <div class="document-category">
+                        <h3><i class="fas fa-${categories[category]?.icon || 'folder'}"></i> ${categories[category]?.title || category}</h3>
+                        <div class="document-grid">
+                `;
+
+                grouped[category].forEach(doc => {
+                    const icon = getFileIcon(doc.type);
+                    const date = new Date(doc.uploadDate).toLocaleDateString();
+                    
+                    html += `
+                        <div class="document-card" onclick="previewDocument('${doc.id}')">
+                            <i class="fas fa-${icon}"></i>
+                            <h4>${truncateText(doc.name, 20)}</h4>
+                            <span>${formatFileSize(doc.size)} • ${date}</span>
+                            <div class="document-actions">
+                                <button class="btn btn-sm btn-outline" onclick="event.stopPropagation(); viewDocument('${doc.id}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); confirmDelete('${doc.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function getFileIcon(type) {
+            if (type.includes('pdf')) return 'file-pdf';
+            if (type.includes('image')) return 'file-image';
+            if (type.includes('word')) return 'file-word';
+            return 'file';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        function truncateText(text, maxLength) {
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength) + '...';
+        }
+
+        function previewDocument(docId) {
+            const user = Auth.getCurrentUser();
+            if (!user) return;
+
+            const documents = Storage.getDocuments(user.id);
+            currentDocument = documents.find(d => d.id === docId);
+            
+            if (!currentDocument) return;
+
+            const icon = getFileIcon(currentDocument.type);
+            const date = new Date(currentDocument.uploadDate).toLocaleDateString();
+
+            document.getElementById('previewTitle').textContent = currentDocument.name;
+            document.getElementById('previewContent').innerHTML = `
+                <div style="text-align: center; padding: 2rem;">
+                    <i class="fas fa-${icon}" style="font-size: 5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h3>${currentDocument.name}</h3>
+                    <p style="color: var(--gray-500);">${formatFileSize(currentDocument.size)} • ${date}</p>
+                    <p style="color: var(--gray-500); margin-top: 1rem;">Category: ${currentDocument.category}</p>
+                </div>
+            `;
+
+            document.getElementById('previewModal').classList.add('active');
+        }
+
+        function closePreviewModal() {
+            document.getElementById('previewModal').classList.remove('active');
+            currentDocument = null;
+        }
+
+        function viewDocument(docId) {
+            previewDocument(docId);
+        }
+
+        function confirmDelete(docId) {
+            if (confirm('Are you sure you want to delete this document?')) {
+                deleteDocument(docId);
+            }
+        }
+
+        function deleteDocument() {
+            if (!currentDocument) return;
+            deleteDocumentById(currentDocument.id);
+            closePreviewModal();
+        }
+
+        function deleteDocumentById(docId) {
+            const user = Auth.getCurrentUser();
+            if (!user) return;
+
+            Storage.deleteDocument(user.id, docId);
+            loadDocuments();
+        }
+    </script>
+</body>
+</html>

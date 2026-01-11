@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visa Guide AI - Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 200px);
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .chat-header .avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chat-header .avatar i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .chat-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+        
+        .chat-header p {
+            margin: 0;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background: var(--gray-50);
+        }
+        
+        .chat-message {
+            max-width: 80%;
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-lg);
+            line-height: 1.6;
+        }
+        
+        .chat-message.bot {
+            background: var(--white);
+            align-self: flex-start;
+            border-bottom-left-radius: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .chat-message.user {
+            background: var(--primary);
+            color: var(--white);
+            align-self: flex-end;
+            border-bottom-right-radius: 0.5rem;
+        }
+        
+        .chat-message .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+        
+        .chat-input-area {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--gray-200);
+            background: var(--white);
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .chat-input-area input {
+            flex: 1;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+        
+        .chat-input-area input:focus {
+            border-color: var(--primary);
+        }
+        
+        .chat-suggestions {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--gray-100);
+        }
+        
+        .suggestion-chip {
+            padding: 0.5rem 1rem;
+            background: var(--gray-100);
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .suggestion-chip:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+        
+        .typing-indicator {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem;
+            align-self: flex-start;
+        }
+        
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: var(--gray-400);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-passport"></i>
+                <span>Visa Guide AI</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="forms.html">Forms</a>
+                <a href="documents.html">Documents</a>
+                <a href="chatbot.html" class="active">Assistant</a>
+                <a href="civics.html">Civics</a>
+            </div>
+            <div class="nav-auth" id="navAuth"></div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Chat Container -->
+    <div style="padding: 2rem;">
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div>
+                    <h2>Immigration Assistant</h2>
+                    <p>Ask me anything about your immigration journey</p>
+                </div>
+                <button class="btn btn-sm btn-outline" style="margin-left: auto; color: white; border-color: white;" onclick="clearChat()">
+                    <i class="fas fa-trash"></i> Clear
+                </button>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be inserted here -->
+            </div>
+            
+            <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <div class="chat-suggestions">
+                <div class="suggestion-chip" onclick="sendSuggestion('How do I apply for citizenship?')">How do I apply for citizenship?</div>
+                <div class="suggestion-chip" onclick="sendSuggestion('What documents do I need?')">What documents do I need?</div>
+                <div class="suggestion-chip" onclick="sendSuggestion('How long does it take?')">How long does it take?</div>
+                <div class="suggestion-chip" onclick="sendSuggestion('What is the N-400 form?')">What is the N-400 form?</div>
+            </div>
+            
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" placeholder="Type your question here..." onkeypress="handleKeyPress(event)">
+                <button class="btn btn-primary" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        const immigrationKnowledge = {
+            'citizenship': 'To apply for U.S. citizenship through naturalization, you typically need to:\n\n1. Be at least 18 years old\n2. Be a lawful permanent resident (green card holder) for at least 5 years (or 3 years if married to a U.S. citizen)\n3. Have continuous residence in the U.S. for at least 5 years\n4. Be physically present in the U.S. for at least 30 months\n5. Be able to read, write, and speak basic English\n6. Have knowledge of U.S. history and government\n7. Be of good moral character\n\nThe main form is N-400, Application for Naturalization.',
+            
+            'n-400': 'The N-400 is the Application for Naturalization. Here\'s what you need to know:\n\n**When to file:**\n- 90 days before your 5-year residency anniversary (or 3-year if married to citizen)\n\n**Required documents:**\n- Green card (front and back copy)\n- Driver\'s license or state ID\n- Travel records for the past 5 years\n- Tax returns for the past 5 years\n\n**Filing fee:** $640 + $85 for biometrics\n\n**Processing time:** Typically 8-12 months, but varies by location.',
+            
+            'documents': 'Key documents you\'ll need for your immigration application:\n\n**Essential documents:**\n- Valid passport\n- Green Card (I-551)\n- Driver\'s License/State ID\n- Birth Certificate\n\n**If applicable:**\n- Marriage Certificate\n- Divorce Decree\n- Military Records\n- Travel History\n- Tax Returns (last 3 years)\n- 2x2 photos\n\nKeep copies of all documents and store them securely.',
+            
+            'timeline': 'Typical timeline for citizenship application:\n\n**Preparation (2-4 weeks):**\n- Gather documents\n- Complete N-400 form\n- Take photos\n\n**Filing:**\n- Submit N-400 with fee\n- Biometrics appointment (2-4 weeks after filing)\n\n**Processing:**\n- Interview (2-6 months after biometrics)\n- Decision (immediately after interview usually)\n\n**Oath Ceremony:**\n- 1-4 weeks after approval\n\nTotal time: Typically 8-14 months from start to ceremony.',
+            
+            'interview': 'The citizenship interview typically includes:\n\n**English Test:**\n- Reading test (reading 1-2 sentences correctly)\n- Writing test (writing 1-2 sentences correctly)\n\n**Civics Test:**\n- 10 questions from a pool of 100\n- Need 6 correct to pass\n\n**Application Review:**\n- Officer reviews your N-400\n- Asks about your background\n- Verifies your documents\n\nTips:\n- Be honest and consistent\n- Bring all requested documents\n- Arrive early\n- Dress professionally',
+            
+            'fees': 'Key fees for the citizenship process:\n\n**N-400 Filing Fee:** $640\n**Biometrics Fee:** $85\n**Total:** $725\n\n**Fee Waivers:**\n- May be available if income is at or below 150% of poverty level\n- Requires Form I-912\n\n**Payment methods:**\n- Check or money order (pay to DHS)\n- Credit/debit card (online only)',
+            
+            'travel': 'Travel outside the U.S. can affect your citizenship application:\n\n**Short trips (less than 6 months):**\n- Generally fine if you maintain continuous residence\n\n**Long trips (6+ months):**\n- May break continuous residence\n- May require additional documentation\n\n**Important:**\n- Keep travel records\n- Get entry stamps in passport\n- Don't travel during the year before filing\n\nConsult an attorney for specific advice on your travel history.'
+        };
+
+        // Check authentication
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!Auth.requireAuth()) return;
+            loadChatHistory();
+        });
+
+        function loadChatHistory() {
+            const user = Auth.getCurrentUser();
+            if (!user) return;
+
+            // Update navigation
+            updateNavigation();
+
+            // Load saved messages
+            const history = Storage.getChatHistory(user.id);
+            const messagesContainer = document.getElementById('chatMessages');
+            
+            if (history.length === 0) {
+                // Show welcome message
+                addBotMessage('Hello! I\'m your Immigration Assistant. I can help answer questions about:\n\n• Citizenship requirements\n• N-400 form help\n• Required documents\n• Interview preparation\n• Processing timelines\n\nWhat would you like to know?');
+            } else {
+                history.forEach(msg => {
+                    addMessage(msg.content, msg.role);
+                });
+            }
+
+            scrollToBottom();
+        }
+
+        function updateNavigation() {
+            const user = Auth.getCurrentUser();
+            const navAuth = document.getElementById('navAuth');
+            
+            if (user) {
+                navAuth.innerHTML = `
+                    <span class="user-greeting">Hello, ${user.fullName || user.email.split('@')[0]}</span>
+                    <button onclick="handleLogout()" class="btn btn-outline btn-sm">Logout</button>
+                `;
+            }
+        }
+
+        function handleLogout() {
+            Auth.logout();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendSuggestion(text) {
+            document.getElementById('chatInput').value = text;
+            sendMessage();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            // Add user message
+            addUserMessage(message);
+            input.value = '';
+
+            // Save to history
+            const user = Auth.getCurrentUser();
+            if (user) {
+                Storage.addChatMessage(user.id, { role: 'user', content: message });
+            }
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            // Generate response
+            setTimeout(() => {
+                hideTypingIndicator();
+                const response = generateResponse(message);
+                addBotMessage(response);
+
+                // Save bot response
+                if (user) {
+                    Storage.addChatMessage(user.id, { role: 'bot', content: response });
+                }
+            }, 1500);
+        }
+
+        function addUserMessage(message) {
+            addMessage(message, 'user');
+        }
+
+        function addBotMessage(message) {
+            addMessage(message, 'bot');
+        }
+
+        function addMessage(message, role) {
+            const container = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${role}`;
+            
+            // Format message with line breaks
+            const formattedMessage = message.replace(/\n/g, '<br>');
+            messageDiv.innerHTML = formattedMessage;
+            
+            const time = document.createElement('div');
+            time.className = 'message-time';
+            time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            messageDiv.appendChild(time);
+            
+            container.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'flex';
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById('chatMessages');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function generateResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            // Check for keywords
+            const keywords = {
+                'citizenship': ['citizenship', 'naturalization', 'become a citizen', 'become citizen'],
+                'n-400': ['n-400', 'n400', 'application form', 'naturalization form'],
+                'documents': ['document', 'documents', 'paperwork', 'required documents'],
+                'timeline': ['how long', 'timeline', 'processing time', 'wait', 'timeframe'],
+                'interview': ['interview', 'test', 'exam', 'civics test', 'english test'],
+                'fees': ['fee', 'cost', 'payment', 'price', 'money'],
+                'travel': ['travel', 'trip', 'abroad', 'outside', 'international']
+            };
+
+            // Find matching topic
+            let matchedTopic = null;
+            for (const [topic, words] of Object.entries(keywords)) {
+                if (words.some(word => lowerMessage.includes(word))) {
+                    matchedTopic = topic;
+                    break;
+                }
+            }
+
+            if (matchedTopic && immigrationKnowledge[matchedTopic]) {
+                return immigrationKnowledge[matchedTopic];
+            }
+
+            // Default responses
+            const defaultResponses = [
+                'I\'m not sure about that specific question. Could you try rephrasing it? You can ask me about citizenship requirements, the N-400 form, required documents, interview preparation, or processing timelines.',
+                'That\'s a great question! While I don\'t have the specific answer, I can help with general information about the citizenship process. What else would you like to know?',
+                'I\'d recommend checking the official USCIS website for detailed information on that topic. Is there something else about the immigration process I can help you with?'
+            ];
+
+            return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+        }
+
+        function clearChat() {
+            if (confirm('Are you sure you want to clear all messages?')) {
+                const user = Auth.getCurrentUser();
+                if (user) {
+                    Storage.clearChatHistory(user.id);
+                }
+                
+                document.getElementById('chatMessages').innerHTML = '';
+                addBotMessage('Hello! I\'m your Immigration Assistant. I can help answer questions about:\n\n• Citizenship requirements\n• N-400 form help\n• Required documents\n• Interview preparation\n• Processing timelines\n\nWhat would you like to know?');
+            }
+        }
+    </script>
+</body>
+</html>
