@@ -4,141 +4,249 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visa Guide AIA - Your Trusted Visa Application Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-card">
-            <div class="auth-header">
-                <div class="logo">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                        <path d="M9 12l2 2 4-4"/>
-                    </svg>
-                </div>
-                <h1>Visa Guide AIA</h1>
-                <p class="subtitle">Your Trusted Visa Application Portal</p>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-passport"></i>
+                <span>Visa Guide AIA</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="active">Home</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="forms.html">Forms</a>
+                <a href="documents.html">Documents</a>
+                <a href="chatbot.html">Assistant</a>
+                <a href="civics.html">Civics</a>
             </div>
-            
-            <div class="auth-tabs">
-                <button class="auth-tab active" id="login-tab" onclick="switchTab('login')">Login</button>
-                <button class="auth-tab" id="register-tab" onclick="switchTab('register')">Register</button>
-            </div>
-            
-            <!-- Login Form -->
-            <form id="login-form" class="auth-form active">
-                <div class="form-group">
-                    <label for="login-email">Email Address</label>
-                    <input type="email" id="login-email" placeholder="Enter your email" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="login-password">Password</label>
-                    <input type="password" id="login-password" placeholder="Enter your password" required>
-                </div>
-                
-                <button type="submit" class="btn btn-primary btn-full">Login</button>
-                
-                <div class="switch-form">
-                    <p>Don't have an account? <a href="#" onclick="switchTab('register'); return false;">Register here</a></p>
-                </div>
-            </form>
-            
-            <!-- Register Form -->
-            <form id="register-form" class="auth-form">
-                <div class="form-group">
-                    <label for="register-name">Full Name</label>
-                    <input type="text" id="register-name" placeholder="Enter your full name" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="register-email">Email Address</label>
-                    <input type="email" id="register-email" placeholder="Enter your email" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="register-password">Password</label>
-                    <input type="password" id="register-password" placeholder="Create a password" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="register-confirm-password">Confirm Password</label>
-                    <input type="password" id="register-confirm-password" placeholder="Confirm your password" required>
-                </div>
-                
-                <button type="submit" class="btn btn-primary btn-full">Create Account</button>
-                
-                <div class="switch-form">
-                    <p>Already have an account? <a href="#" onclick="switchTab('login'); return false;">Login here</a></p>
-                </div>
-            </form>
+            <div class="nav-auth" id="navAuth"></div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
-        
-        <div class="auth-features">
-            <h3>Why Choose Visa Guide AIA?</h3>
-            <ul class="feature-list">
-                <li>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                    <span>Track your visa applications in real-time</span>
-                </li>
-                <li>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                    <span>Secure document management system</span>
-                </li>
-                <li>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                    <span>Expert guidance for all visa types</span>
-                </li>
-                <li>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                    <span>24/7 customer support</span>
-                </li>
-            </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <div style="background: linear-gradient(135deg, #0F52BA 0%, #00A86B 100%); color: white; padding: 4rem 2rem; text-align: center;">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">Your Trusted Visa Application Portal</h1>
+            <p style="font-size: 1.2rem; opacity: 0.9; margin-bottom: 2rem;">Track your applications, manage documents, and get expert guidance throughout your immigration journey.</p>
+            
+            <!-- Login/Register Forms -->
+            <div class="auth-container" style="background: white; border-radius: 12px; padding: 2rem; color: #333; max-width: 450px; margin: 0 auto;">
+                <div class="auth-tabs" style="display: flex; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0;">
+                    <button class="auth-tab active" data-tab="login" onclick="switchTab('login')" style="flex: 1; padding: 0.75rem; border: none; background: none; font-size: 1rem; font-weight: 600; color: #0F52BA; cursor: pointer; border-bottom: 2px solid #0F52BA; margin-bottom: -2px;">Login</button>
+                    <button class="auth-tab" data-tab="register" onclick="switchTab('register')" style="flex: 1; padding: 0.75rem; border: none; background: none; font-size: 1rem; font-weight: 600; color: #64748b; cursor: pointer;">Register</button>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
+                    <div id="loginAlert"></div>
+                    
+                    <div class="form-group">
+                        <label for="loginEmail">Email Address</label>
+                        <input type="email" id="loginEmail" placeholder="Enter your email" required style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem;">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; font-size: 1rem;">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </form>
+                
+                <!-- Register Form -->
+                <form id="registerForm" class="auth-form" onsubmit="handleRegister(event)" style="display: none;">
+                    <div id="registerAlert"></div>
+                    
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" placeholder="Enter your full name" required style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registerEmail">Email Address</label>
+                        <input type="email" id="registerEmail" placeholder="Enter your email" required style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" placeholder="Create a password" required style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" placeholder="Confirm your password" required style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem;">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; font-size: 1rem;">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
-    
-    <!-- Notification Container -->
-    <div id="notification-container"></div>
-    
-    <script src="js/storage.js"></script>
-    <script src="js/auth.js"></script>
-    <script>
-        // Tab switching functionality
-        function switchTab(tab) {
-            const loginTab = document.getElementById('login-tab');
-            const registerTab = document.getElementById('register-tab');
-            const loginForm = document.getElementById('login-form');
-            const registerForm = document.getElementById('register-form');
-            
-            if (tab === 'login') {
-                loginTab.classList.add('active');
-                registerTab.classList.remove('active');
-                loginForm.classList.add('active');
-                registerForm.classList.remove('active');
-            } else {
-                loginTab.classList.remove('active');
-                registerTab.classList.add('active');
-                loginForm.classList.remove('active');
-                registerForm.classList.add('active');
-            }
-        }
+
+    <!-- Features Section -->
+    <div style="max-width: 1200px; margin: 0 auto; padding: 4rem 2rem;">
+        <h2 style="text-align: center; margin-bottom: 3rem; font-size: 2rem;">Everything You Need</h2>
         
-        // Check if user is already logged in
-        document.addEventListener('DOMContentLoaded', function() {
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+            <div class="card" style="text-align: center; padding: 2rem;">
+                <div style="width: 64px; height: 64px; background: rgba(15, 82, 186, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <i class="fas fa-tachometer-alt" style="font-size: 1.5rem; color: #0F52BA;"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Dashboard</h3>
+                <p style="color: #64748b;">Track all your applications in one place with real-time status updates</p>
+            </div>
+            
+            <div class="card" style="text-align: center; padding: 2rem;">
+                <div style="width: 64px; height: 64px; background: rgba(0, 168, 107, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <i class="fas fa-file-alt" style="font-size: 1.5rem; color: #00A86B;"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Easy Forms</h3>
+                <p style="color: #64748b;">Step-by-step application forms with validation and guidance</p>
+            </div>
+            
+            <div class="card" style="text-align: center; padding: 2rem;">
+                <div style="width: 64px; height: 64px; background: rgba(15, 82, 186, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <i class="fas fa-folder" style="font-size: 1.5rem; color: #0F52BA;"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Document Manager</h3>
+                <p style="color: #64748b;">Upload, organize, and manage all your immigration documents</p>
+            </div>
+            
+            <div class="card" style="text-align: center; padding: 2rem;">
+                <div style="width: 64px; height: 64px; background: rgba(0, 168, 107, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <i class="fas fa-robot" style="font-size: 1.5rem; color: #00A86B;"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">AI Assistant</h3>
+                <p style="color: #64748b;">Get instant answers to your immigration questions 24/7</p>
+            </div>
+            
+            <div class="card" style="text-align: center; padding: 2rem;">
+                <div style="width: 64px; height: 64px; background: rgba(15, 82, 186, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <i class="fas fa-globe" style="font-size: 1.5rem; color: #0F52BA;"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Civics Prep</h3>
+                <p style="color: #64748b;">Practice questions and flashcards for your citizenship test</p>
+            </div>
+            
+            <div class="card" style="text-align: center; padding: 2rem;">
+                <div style="width: 64px; height: 64px; background: rgba(0, 168, 107, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <i class="fas fa-shield-alt" style="font-size: 1.5rem; color: #00A86B;"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Secure & Private</h3>
+                <p style="color: #64748b;">Your data is encrypted and stored securely</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script>
+        // Check if already logged in
+        document.addEventListener('DOMContentLoaded', () => {
             const currentUser = Storage.getCurrentUser();
             if (currentUser) {
-                window.location.href = 'dashboard.html';
+                document.getElementById('navAuth').innerHTML = `
+                    <span style="margin-right: 1rem; color: #64748b;">Hello, ${currentUser.name || currentUser.email.split('@')[0]}</span>
+                    <button onclick="handleLogout()" class="btn btn-outline btn-sm">Logout</button>
+                `;
+            }
+            
+            // Check URL parameter for tab
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('tab') === 'register') {
+                switchTab('register');
             }
         });
+
+        function switchTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => {
+                t.classList.remove('active');
+                t.style.borderBottom = 'none';
+                t.style.color = '#64748b';
+                if (t.dataset.tab === tab) {
+                    t.classList.add('active');
+                    t.style.borderBottom = '2px solid #0F52BA';
+                    t.style.color = '#0F52BA';
+                }
+            });
+            
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            document.getElementById(tab + 'Form').classList.add('active');
+            
+            if (tab === 'register') {
+                document.getElementById('registerForm').style.display = 'block';
+            } else {
+                document.getElementById('registerForm').style.display = 'none';
+            }
+        }
+
+        function showAlert(containerId, type, message) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `
+                <div style="padding: 0.75rem; margin-bottom: 1rem; border-radius: 8px; background: ${type === 'success' ? '#d1fae5' : '#fee2e2'}; color: ${type === 'success' ? '#065f46' : '#991b1b'};">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                    <span style="margin-left: 0.5rem;">${message}</span>
+                </div>
+            `;
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            const result = Storage.loginUser(email, password);
+            
+            if (result.success) {
+                showAlert('loginAlert', 'success', 'Login successful! Redirecting...');
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1000);
+            } else {
+                showAlert('loginAlert', 'danger', result.message);
+            }
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                showAlert('registerAlert', 'danger', 'Passwords do not match');
+                return;
+            }
+            
+            const result = Storage.registerUser({ name: fullName, email: email, password: password });
+            
+            if (result.success) {
+                showAlert('registerAlert', 'success', 'Account created successfully! Redirecting...');
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1000);
+            } else {
+                showAlert('registerAlert', 'danger', result.message);
+            }
+        }
+
+        function handleLogout() {
+            Storage.logoutUser();
+            window.location.reload();
+        }
     </script>
 </body>
 </html>
