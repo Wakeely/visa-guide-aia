@@ -231,7 +231,6 @@
     </div>
 
     <script src="js/storage.js"></script>
-    <script src="js/auth.js"></script>
     <script>
         const immigrationKnowledge = {
             'citizenship': 'To apply for U.S. citizenship through naturalization, you typically need to:\n\n1. Be at least 18 years old\n2. Be a lawful permanent resident (green card holder) for at least 5 years (or 3 years if married to a U.S. citizen)\n3. Have continuous residence in the U.S. for at least 5 years\n4. Be physically present in the U.S. for at least 30 months\n5. Be able to read, write, and speak basic English\n6. Have knowledge of U.S. history and government\n7. Be of good moral character\n\nThe main form is N-400, Application for Naturalization.',
@@ -251,19 +250,25 @@
 
         // Check authentication
         document.addEventListener('DOMContentLoaded', () => {
-            if (!Auth.requireAuth()) return;
+            const currentUser = Storage.getCurrentUser();
+            if (!currentUser) {
+                window.location.href = 'index.html';
+                return;
+            }
+            updateNavigation();
             loadChatHistory();
         });
 
         function loadChatHistory() {
-            const user = Auth.getCurrentUser();
-            if (!user) return;
+            const currentUser = Storage.getCurrentUser();
+            if (!currentUser) return;
 
             // Update navigation
             updateNavigation();
 
             // Load saved messages
-            const history = Storage.getChatHistory(user.id);
+            const chatHistory = Storage.get('chat_history') || {};
+            const history = chatHistory[currentUser.id] || [];
             const messagesContainer = document.getElementById('chatMessages');
             
             if (history.length === 0) {
@@ -279,19 +284,20 @@
         }
 
         function updateNavigation() {
-            const user = Auth.getCurrentUser();
+            const currentUser = Storage.getCurrentUser();
             const navAuth = document.getElementById('navAuth');
             
-            if (user) {
+            if (currentUser) {
                 navAuth.innerHTML = `
-                    <span class="user-greeting">Hello, ${user.fullName || user.email.split('@')[0]}</span>
+                    <span class="user-greeting">Hello, ${currentUser.name || currentUser.email.split('@')[0]}</span>
                     <button onclick="handleLogout()" class="btn btn-outline btn-sm">Logout</button>
                 `;
             }
         }
 
         function handleLogout() {
-            Auth.logout();
+            Storage.logoutUser();
+            window.location.href = 'index.html';
         }
 
         function handleKeyPress(event) {
@@ -316,9 +322,15 @@
             input.value = '';
 
             // Save to history
-            const user = Auth.getCurrentUser();
-            if (user) {
-                Storage.addChatMessage(user.id, { role: 'user', content: message });
+            const currentUser = Storage.getCurrentUser();
+            if (currentUser) {
+                // Store in localStorage
+                let chatHistory = Storage.get('chat_history') || {};
+                if (!chatHistory[currentUser.id]) {
+                    chatHistory[currentUser.id] = [];
+                }
+                chatHistory[currentUser.id].push({ role: 'user', content: message, timestamp: new Date().toISOString() });
+                Storage.set('chat_history', chatHistory);
             }
 
             // Show typing indicator
@@ -331,8 +343,14 @@
                 addBotMessage(response);
 
                 // Save bot response
-                if (user) {
-                    Storage.addChatMessage(user.id, { role: 'bot', content: response });
+                const currentUser = Storage.getCurrentUser();
+                if (currentUser) {
+                    let chatHistory = Storage.get('chat_history') || {};
+                    if (!chatHistory[currentUser.id]) {
+                        chatHistory[currentUser.id] = [];
+                    }
+                    chatHistory[currentUser.id].push({ role: 'bot', content: response, timestamp: new Date().toISOString() });
+                    Storage.set('chat_history', chatHistory);
                 }
             }, 1500);
         }
@@ -416,9 +434,11 @@
 
         function clearChat() {
             if (confirm('Are you sure you want to clear all messages?')) {
-                const user = Auth.getCurrentUser();
-                if (user) {
-                    Storage.clearChatHistory(user.id);
+                const currentUser = Storage.getCurrentUser();
+                if (currentUser) {
+                    let chatHistory = Storage.get('chat_history') || {};
+                    chatHistory[currentUser.id] = [];
+                    Storage.set('chat_history', chatHistory);
                 }
                 
                 document.getElementById('chatMessages').innerHTML = '';

@@ -429,40 +429,46 @@
 
         // Check authentication
         document.addEventListener('DOMContentLoaded', () => {
-            if (!Auth.requireAuth()) return;
+            const currentUser = Storage.getCurrentUser();
+            if (!currentUser) {
+                window.location.href = 'index.html';
+                return;
+            }
             loadStats();
         });
 
         function loadStats() {
-            const user = Auth.getCurrentUser();
-            if (!user) return;
+            const currentUser = Storage.getCurrentUser();
+            if (!currentUser) return;
 
             // Update navigation
             updateNavigation();
 
             // Load saved progress
-            const progress = Storage.getCivicsProgress(user.id);
-            userStats.answered = progress.questionsAnswered || 0;
-            userStats.correct = progress.correctAnswers || 0;
-            userStats.cards = progress.completedFlashcards?.length || 0;
+            const progress = Storage.get('civics_progress') || {};
+            const userProgress = progress[currentUser.id] || {};
+            userStats.answered = userProgress.questionsAnswered || 0;
+            userStats.correct = userProgress.correctAnswers || 0;
+            userStats.cards = userProgress.completedFlashcards?.length || 0;
 
             updateStatsDisplay();
         }
 
         function updateNavigation() {
-            const user = Auth.getCurrentUser();
+            const currentUser = Storage.getCurrentUser();
             const navAuth = document.getElementById('navAuth');
             
-            if (user) {
+            if (currentUser) {
                 navAuth.innerHTML = `
-                    <span class="user-greeting">Hello, ${user.fullName || user.email.split('@')[0]}</span>
+                    <span class="user-greeting">Hello, ${currentUser.name || currentUser.email.split('@')[0]}</span>
                     <button onclick="handleLogout()" class="btn btn-outline btn-sm">Logout</button>
                 `;
             }
         }
 
         function handleLogout() {
-            Auth.logout();
+            Storage.logoutUser();
+            window.location.href = 'index.html';
         }
 
         function setMode(mode) {
@@ -618,16 +624,18 @@
         }
 
         function markCardKnown() {
-            const user = Auth.getCurrentUser();
-            if (!user) return;
+            const currentUser = Storage.getCurrentUser();
+            if (!currentUser) return;
 
-            let progress = Storage.getCivicsProgress(user.id);
+            let allProgress = Storage.get('civics_progress') || {};
+            let progress = allProgress[currentUser.id] || {};
             if (!progress.completedFlashcards) progress.completedFlashcards = [];
 
             if (!progress.completedFlashcards.includes(currentCardIndex)) {
                 progress.completedFlashcards.push(currentCardIndex);
                 userStats.cards++;
-                Storage.updateCivicsProgress(user.id, progress);
+                allProgress[currentUser.id] = progress;
+                Storage.set('civics_progress', allProgress);
                 updateStatsDisplay();
             }
 
@@ -636,13 +644,15 @@
 
         // Stats
         function saveStats() {
-            const user = Auth.getCurrentUser();
-            if (!user) return;
+            const currentUser = Storage.getCurrentUser();
+            if (!currentUser) return;
 
-            Storage.updateCivicsProgress(user.id, {
+            let allProgress = Storage.get('civics_progress') || {};
+            allProgress[currentUser.id] = {
                 questionsAnswered: userStats.answered,
                 correctAnswers: userStats.correct
-            });
+            };
+            Storage.set('civics_progress', allProgress);
         }
 
         function updateStatsDisplay() {

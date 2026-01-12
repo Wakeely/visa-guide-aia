@@ -170,44 +170,48 @@
     </div>
 
     <script src="js/storage.js"></script>
-    <script src="js/auth.js"></script>
     <script>
         let currentFilter = 'all';
         let currentDocument = null;
 
         // Check authentication
         document.addEventListener('DOMContentLoaded', () => {
-            if (!Auth.requireAuth()) return;
+            const currentUser = Storage.getCurrentUser();
+            if (!currentUser) {
+                window.location.href = 'index.html';
+                return;
+            }
             loadDocuments();
             setupDragAndDrop();
         });
 
         function loadDocuments() {
-            const user = Auth.getCurrentUser();
-            if (!user) return;
+            const currentUser = Storage.getCurrentUser();
+            if (!currentUser) return;
 
             // Update navigation
             updateNavigation();
 
-            // Get documents
-            const documents = Storage.getDocuments(user.id);
+            // Get documents - use documents from user object
+            const documents = currentUser.documents || [];
             renderDocuments(documents);
         }
 
         function updateNavigation() {
-            const user = Auth.getCurrentUser();
+            const currentUser = Storage.getCurrentUser();
             const navAuth = document.getElementById('navAuth');
             
-            if (user) {
+            if (currentUser) {
                 navAuth.innerHTML = `
-                    <span class="user-greeting">Hello, ${user.fullName || user.email.split('@')[0]}</span>
+                    <span class="user-greeting">Hello, ${currentUser.name || currentUser.email.split('@')[0]}</span>
                     <button onclick="handleLogout()" class="btn btn-outline btn-sm">Logout</button>
                 `;
             }
         }
 
         function handleLogout() {
-            Auth.logout();
+            Storage.logoutUser();
+            window.location.href = 'index.html';
         }
 
         function setupDragAndDrop() {
@@ -236,8 +240,8 @@
         }
 
         function handleFiles(files) {
-            const user = Auth.getCurrentUser();
-            if (!user) return;
+            const currentUser = Storage.getCurrentUser();
+            if (!currentUser) return;
 
             Array.from(files).forEach(file => {
                 // Validate file
@@ -261,23 +265,22 @@
                     const category = determineCategory(file.name);
                     
                     // Store document metadata (in real app, store file on server)
-                    const document = Storage.addDocument(user.id, {
+                    const docResult = Storage.addDocument(currentUser.id, {
                         name: file.name,
                         type: file.type,
                         size: file.size,
                         category: category,
-                        dataUrl: null // In real app, store file URL
+                        uploadDate: new Date().toISOString()
                     });
-
+                    
                     // For demo, create a placeholder
-                    document.dataUrl = createPlaceholder(file);
-                    Storage.deleteDocument(user.id, document.id);
-                    Storage.addDocument(user.id, {
+                    Storage.deleteDocument(currentUser.id, docResult.document.id);
+                    Storage.addDocument(currentUser.id, {
                         name: file.name,
                         type: file.type,
                         size: file.size,
                         category: category,
-                        dataUrl: createPlaceholder(file)
+                        uploadDate: new Date().toISOString()
                     });
 
                     hideUploadProgress();
@@ -330,10 +333,10 @@
             });
 
             // Filter and render
-            const user = Auth.getCurrentUser();
-            if (!user) return;
+            const currentUser = Storage.getCurrentUser();
+            if (!currentUser) return;
 
-            let documents = Storage.getDocuments(user.id);
+            let documents = currentUser.documents || [];
             
             if (category !== 'all') {
                 documents = documents.filter(d => d.category === category);
@@ -430,10 +433,10 @@
         }
 
         function previewDocument(docId) {
-            const user = Auth.getCurrentUser();
-            if (!user) return;
+            const currentUser = Storage.getCurrentUser();
+            if (!currentUser) return;
 
-            const documents = Storage.getDocuments(user.id);
+            const documents = currentUser.documents || [];
             currentDocument = documents.find(d => d.id === docId);
             
             if (!currentDocument) return;
@@ -476,10 +479,10 @@
         }
 
         function deleteDocumentById(docId) {
-            const user = Auth.getCurrentUser();
-            if (!user) return;
+            const currentUser = Storage.getCurrentUser();
+            if (!currentUser) return;
 
-            Storage.deleteDocument(user.id, docId);
+            Storage.deleteDocument(currentUser.id, docId);
             loadDocuments();
         }
     </script>
